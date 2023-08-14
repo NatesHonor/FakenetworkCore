@@ -15,6 +15,7 @@ import com.nate.hypixel.commands.Reports.ListReportsCommand;
 import com.nate.hypixel.commands.Reports.ReportCommand;
 import com.nate.hypixel.utils.events.OnPlayerJoin;
 import com.nate.hypixel.utils.events.OnPlayerLeave;
+import com.nate.hypixel.utils.events.OnServerConnect;
 import com.nate.hypixel.utils.storage.mysql.CreateTables;
 
 import net.md_5.bungee.api.plugin.Listener;
@@ -61,7 +62,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, new OnPlayerJoin());
         getProxy().getPluginManager().registerListener(this, new OnPlayerLeave());
-
+        getProxy().getPluginManager().registerListener(this, new OnServerConnect());
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
         getProxy().getPluginManager().registerCommand(this, levelSetCommand);
