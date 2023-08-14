@@ -30,16 +30,10 @@ public class StaffChatCommand extends Command {
         }
 
         String message = String.join(" ", args);
-
-        player.sendMessage(new TextComponent(ChatColor.GREEN + "You said: " + message));
-
-        for (
-
-        ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
+        for (ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
             LuckPerms luckPerms = LuckPermsProvider.get();
             if (!(sender instanceof ProxiedPlayer)) {
-                staffMember.sendMessage(
-                        new TextComponent(ChatColor.RED + "[SERVER] " + ": " + message));
+                staffMember.sendMessage(new TextComponent(ChatColor.RED + "[SERVER] " + ": " + message));
                 return;
             }
             if (staffMember.hasPermission("fakenetwork.staff")) {
@@ -47,7 +41,7 @@ public class StaffChatCommand extends Command {
                 String prefix = user.getCachedData().getMetaData().getPrefix();
                 staffMember.sendMessage(
                         new TextComponent(
-                                ChatColor.GREEN + "[Staff Chat] " + " "
+                                ChatColor.GREEN + "[Staff Chat] "
                                         + ChatColor.translateAlternateColorCodes('&', prefix) + player.getName() + ": "
                                         + ChatColor.GRAY + message));
             }
