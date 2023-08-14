@@ -1,0 +1,24 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "cSpell.words": [
+        "addexp",
+        "Crims",
+        "hypixel",
+        "hypixelrank",
+        "kickoffline",
+        "levelexp",
+        "levelset",
+        "listreports",
+        "pchat",
+        "playername",
+        "playeruuid",
+        "Proxied",
+        "rankname",
+        "reportplayer",
+        "reportslist",
+        "setlevel",
+        "staffchat",
+        "tagcolor"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
