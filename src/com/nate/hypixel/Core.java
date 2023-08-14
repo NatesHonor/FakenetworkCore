@@ -11,6 +11,8 @@ import com.nate.hypixel.commands.LinkCommand;
 import com.nate.hypixel.commands.StaffChatCommand;
 import com.nate.hypixel.commands.Guilds.GuildCommandExecutor;
 import com.nate.hypixel.commands.Parties.PartyCommandExecutor;
+import com.nate.hypixel.commands.Reports.AcceptReportCommand;
+import com.nate.hypixel.commands.Reports.DenyReportCommand;
 import com.nate.hypixel.commands.Reports.ListReportsCommand;
 import com.nate.hypixel.commands.Reports.ReportCommand;
 import com.nate.hypixel.utils.events.OnPlayerJoin;
@@ -36,6 +38,9 @@ public class Core extends Plugin implements Listener {
 
         CreateTables createTables = new CreateTables();
         createTables.createLevelsTable();
+        createTables.createReportsTable();
+        createTables.createAcceptedReportsTable();
+        createTables.createDeniedReportsTable();
 
         try {
             if (!getDataFolder().exists()) {
@@ -67,6 +72,8 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, new StaffChatEventListener());
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
+        getProxy().getPluginManager().registerCommand(this, new AcceptReportCommand());
+        getProxy().getPluginManager().registerCommand(this, new DenyReportCommand());
         getProxy().getPluginManager().registerCommand(this, levelSetCommand);
         getProxy().getPluginManager().registerCommand(this, levelExpCommand);
         getProxy().getPluginManager().registerCommand(this, guildCommandExecutor);

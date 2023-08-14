@@ -73,4 +73,34 @@ public class CreateTables {
             e.printStackTrace();
         }
     }
+
+    public void createAcceptedReportsTable() {
+        try {
+            Statement statement = core.getConnection().createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS accepted_reports (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "reporter_name VARCHAR(255) NOT NULL," +
+                    "reported_name VARCHAR(255) NOT NULL," +
+                    "reason TEXT" +
+                    ")");
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createDeniedReportsTable() {
+        try {
+            Statement statement = core.getConnection().createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS denied_reports (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "reporter_name VARCHAR(255) NOT NULL," +
+                    "reported_name VARCHAR(255) NOT NULL," +
+                    "reason TEXT" +
+                    ")");
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

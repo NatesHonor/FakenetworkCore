@@ -34,24 +34,36 @@ public class ListReportsCommand extends Command {
 
         try {
             PreparedStatement statement = core.getConnection().prepareStatement(
-                    "SELECT reporter_uuid, reported_player, reason FROM reports");
+                    "SELECT id, reporter_name, reported_name, reason FROM reports");
             ResultSet resultSet = statement.executeQuery();
 
             TextComponent reportsMessage = new TextComponent(ChatColor.YELLOW + "Reports:\n");
+
+            boolean foundReports = false;
+
             while (resultSet.next()) {
-                String reporterUUID = resultSet.getString("reporter_uuid");
-                String reportedPlayer = resultSet.getString("reported_player");
+                int reportId = resultSet.getInt("id");
+                String reporterName = resultSet.getString("reporter_name");
+                String reportedPlayer = resultSet.getString("reported_name");
                 String reason = resultSet.getString("reason");
 
                 TextComponent reportEntry = new TextComponent(
-                        ChatColor.YELLOW + "- Reporter: " + ChatColor.GOLD + reporterUUID + "\n" +
-                                ChatColor.YELLOW + "  Reported Player: " + ChatColor.GOLD + reportedPlayer + "\n" +
-                                ChatColor.YELLOW + "  Reason: " + ChatColor.GOLD + reason + "\n");
+                        ChatColor.GRAY + "------------------------\n" +
+                                ChatColor.YELLOW + "Report ID: " + ChatColor.GOLD + reportId + "\n" +
+                                ChatColor.YELLOW + "Reporter: " + ChatColor.GOLD + reporterName + "\n" +
+                                ChatColor.YELLOW + "Reported Player: " + ChatColor.GOLD + reportedPlayer + "\n" +
+                                ChatColor.YELLOW + "Reason: " + ChatColor.GOLD + reason + "\n" +
+                                ChatColor.GRAY + "------------------------\n");
 
                 reportsMessage.addExtra(reportEntry);
+                foundReports = true;
             }
 
-            player.sendMessage(reportsMessage);
+            if (foundReports) {
+                player.sendMessage(reportsMessage);
+            } else {
+                player.sendMessage(new TextComponent(ChatColor.YELLOW + "No reports found."));
+            }
 
             resultSet.close();
             statement.close();

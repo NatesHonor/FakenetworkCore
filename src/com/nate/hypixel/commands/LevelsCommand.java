@@ -62,8 +62,7 @@ public class LevelsCommand {
                 return;
             }
 
-            levels.savePlayerLevel(player.getUniqueId(), level, 0); // The second parameter is initial EXP (0 in this
-                                                                    // case)
+            levels.savePlayerLevel(player.getUniqueId(), level, 0);
 
             sender.sendMessage(new TextComponent(
                     ChatColor.GREEN + "Successfully set " + playerName + "'s level to " + level + "."));

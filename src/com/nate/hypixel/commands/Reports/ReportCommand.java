@@ -40,13 +40,19 @@ public class ReportCommand extends Command {
             return;
         }
 
+        // Remove the reported player's name from the reason
         String reason = String.join(" ", args);
+        reason = reason.replaceFirst(args[0], "").trim();
 
         List<ProxiedPlayer> staffMembers = getStaffWithPermission("fakenetwork.reports");
 
+        TextComponent reportMessage = new TextComponent(ChatColor.RED + "[Report] ");
+        reportMessage.addExtra(ChatColor.RESET + player.getName());
+        reportMessage.addExtra(ChatColor.GOLD + " reported ");
+        reportMessage.addExtra(ChatColor.RESET + reportedPlayer.getName());
+        reportMessage.addExtra(ChatColor.GOLD + " for: " + ChatColor.RESET + reason);
+
         for (ProxiedPlayer staff : staffMembers) {
-            TextComponent reportMessage = new TextComponent(ChatColor.RED + "[Report] " +
-                    ChatColor.RESET + player.getName() + " reported " + reportedPlayer.getName() + " for: " + reason);
             staff.sendMessage(reportMessage);
         }
 
@@ -54,7 +60,7 @@ public class ReportCommand extends Command {
                 reason);
 
         TextComponent successMessage = new TextComponent(ChatColor.GREEN + "Thank you for reporting " +
-                reportedPlayer.getName() + ". Staff members have been notified.");
+                ChatColor.RESET + reportedPlayer.getName() + ChatColor.GREEN + ". Staff members have been notified.");
         sender.sendMessage(successMessage);
     }
 
@@ -72,7 +78,7 @@ public class ReportCommand extends Command {
             String reason) {
         try {
             PreparedStatement statement = core.getConnection().prepareStatement(
-                    "INSERT INTO reports (reporter_name, reporter_uuid, reported_name, reported_uuid reason) VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO reports (reporter_name, reporter_uuid, reported_name, reported_uuid, reason) VALUES (?, ?, ?, ?, ?)");
             statement.setString(1, reporterName);
             statement.setString(2, reporterUUID.toString());
             statement.setString(3, reportedName);
