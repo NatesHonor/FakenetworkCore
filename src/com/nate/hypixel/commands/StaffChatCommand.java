@@ -31,21 +31,11 @@ public class StaffChatCommand extends Command {
 
         String message = String.join(" ", args);
 
-        if (message.startsWith("#")) {
-            message = message.substring(1);
+        player.sendMessage(new TextComponent(ChatColor.GREEN + "You said: " + message));
 
-            for (ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
-                if (staffMember.hasPermission("fakenetwork.staff.chat.code")) {
-                    staffMember.sendMessage(
-                            new TextComponent(ChatColor.GREEN + "[Staff Chat] " + player.getName() + ": " + message));
-                }
-            }
-            return;
-        } else {
-            player.sendMessage(new TextComponent(ChatColor.GREEN + "You said: " + message));
-        }
+        for (
 
-        for (ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
+        ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
             LuckPerms luckPerms = LuckPermsProvider.get();
             if (!(sender instanceof ProxiedPlayer)) {
                 staffMember.sendMessage(

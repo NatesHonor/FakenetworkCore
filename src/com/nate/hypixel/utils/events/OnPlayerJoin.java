@@ -12,12 +12,6 @@ import com.nate.hypixel.utils.storage.mysql.CreateTables;
 import com.nate.hypixel.utils.storage.mysql.Levels;
 import com.nate.hypixel.utils.storage.mysql.Playtime;
 
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -25,8 +19,7 @@ import net.md_5.bungee.event.EventHandler;
 public class OnPlayerJoin implements Listener {
 
     @EventHandler
-    public void onPlayerJoin(PostLoginEvent event) {
-        ProxiedPlayer player = event.getPlayer();
+    public void registerAPIStuff(PostLoginEvent event) {
         String playerName = event.getPlayer().getName();
         UUID playerId = event.getPlayer().getUniqueId();
         PlayerStartTimes playerStartTimes = new PlayerStartTimes();
@@ -50,21 +43,5 @@ public class OnPlayerJoin implements Listener {
         String rank = getRank.getRank(playerName);
         sendLevelRequests.sendLevelRequest(playerName, level);
         SendRankRequests.sendRankRequest(playerName, rank);
-
-        if (player.hasPermission("fakenetwork.staff.join")) {
-            LuckPerms luckPerms = LuckPermsProvider.get();
-
-            User user = luckPerms.getUserManager().getUser(player.getUniqueId());
-            String prefix = user.getCachedData().getMetaData().getPrefix();
-            String serverName = player.getServer() != null ? player.getServer().getInfo().getName() : "Unknown";
-            TextComponent message = new TextComponent(ChatColor.AQUA + "(Staff) "
-                    + ChatColor.translateAlternateColorCodes('&', prefix) + playerName + " has connected to "
-                    + serverName);
-            for (ProxiedPlayer staffPlayer : Core.getInstance().getProxy().getPlayers()) {
-                if (staffPlayer.hasPermission("fakenetwork.staff.join")) {
-                    staffPlayer.sendMessage(message);
-                }
-            }
-        }
     }
 }
