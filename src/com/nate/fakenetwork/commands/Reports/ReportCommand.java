@@ -1,5 +1,8 @@
 package com.nate.fakenetwork.commands.Reports;
 
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.Node;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -47,11 +50,34 @@ public class ReportCommand extends Command {
 
         List<ProxiedPlayer> staffMembers = getStaffWithPermission("fakenetwork.reports");
 
-        TextComponent reportMessage = new TextComponent(ChatColor.RED + "[Report] ");
-        reportMessage.addExtra(ChatColor.RESET + player.getName());
-        reportMessage.addExtra(ChatColor.GOLD + " reported ");
-        reportMessage.addExtra(ChatColor.RESET + reportedPlayer.getName());
-        reportMessage.addExtra(ChatColor.GOLD + " for: " + ChatColor.RESET + reason);
+        User reportingUser = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
+        User reportedUser = LuckPermsProvider.get().getUserManager().getUser(reportedPlayer.getUniqueId());
+
+        // Get their prefixes
+        String reportingUserPrefix = "";
+        String reportedUserPrefix = "";
+
+        if (reportingUser != null) {
+            for (Node node : reportingUser.getNodes()) {
+                if (node.getKey().startsWith("prefix.")) {
+                    reportingUserPrefix = ChatColor.translateAlternateColorCodes('&', String.valueOf(node.getValue()));
+                    break;
+                }
+            }
+        }
+
+        if (reportedUser != null) {
+            for (Node node : reportedUser.getNodes()) {
+                if (node.getKey().startsWith("prefix.")) {
+                    reportedUserPrefix = ChatColor.translateAlternateColorCodes('&', String.valueOf(node.getValue()));
+                    break;
+                }
+            }
+        }
+
+        TextComponent reportMessage = new TextComponent(
+                ChatColor.RED + " Report | " + reportingUserPrefix + player.getName() + " &7reported " +
+                        reportedUserPrefix + reportedPlayer.getName() + ChatColor.RED + " for &4Hacking in &6server");
 
         for (ProxiedPlayer staff : staffMembers) {
             staff.sendMessage(reportMessage);

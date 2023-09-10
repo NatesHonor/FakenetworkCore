@@ -15,6 +15,7 @@ import com.nate.fakenetwork.commands.Reports.AcceptReportCommand;
 import com.nate.fakenetwork.commands.Reports.DenyReportCommand;
 import com.nate.fakenetwork.commands.Reports.ListReportsCommand;
 import com.nate.fakenetwork.commands.Reports.ReportCommand;
+import com.nate.fakenetwork.utils.api.Endpoint;
 import com.nate.fakenetwork.utils.events.OnPlayerJoin;
 import com.nate.fakenetwork.utils.events.OnPlayerLeave;
 import com.nate.fakenetwork.utils.events.OnServerConnect;
@@ -30,9 +31,16 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
+    Endpoint endpoint = new Endpoint(26000);
 
     @Override
     public void onEnable() {
+        try {
+            endpoint.startAPI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         instance = this;
         connection = setupDatabase();
 
@@ -94,6 +102,11 @@ public class Core extends Plugin implements Listener {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            endpoint.stopAPI();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

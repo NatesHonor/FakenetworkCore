@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PartyCommandExecutor extends Command implements TabExecutor {
     public PartyCommandExecutor() {
         super("p", null, "party");
