@@ -49,7 +49,6 @@ public class Endpoint extends AbstractHandler {
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         if ("/report".equals(target) && baseRequest.getMethod().equals("POST")) {
-            // Handle the /report POST request
             String reported = request.getParameter("reported");
             String reason = request.getParameter("reason");
 
