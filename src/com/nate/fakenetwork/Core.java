@@ -31,16 +31,16 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
+    private Endpoint endpoint;
 
     public static Core getInstance() {
         return instance;
     }
 
-    Endpoint endpoint = new Endpoint(26000);
-
     @Override
     public void onEnable() {
         instance = this;
+        Endpoint endpoint = new Endpoint(26000);
         try {
             endpoint.startAPI();
         } catch (Exception e) {
@@ -105,7 +105,9 @@ public class Core extends Plugin implements Listener {
             }
         }
         try {
-            endpoint.stopAPI();
+            if (endpoint != null) { // Check if endpoint is not null
+                endpoint.stopAPI();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
