@@ -31,7 +31,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
-    private Endpoint endpoint;
+    private static Endpoint endpoint;
 
     public static Core getInstance() {
         return instance;
@@ -40,12 +40,6 @@ public class Core extends Plugin implements Listener {
     @Override
     public void onEnable() {
         instance = this;
-        Endpoint endpoint = new Endpoint(26000);
-        try {
-            endpoint.startAPI();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         connection = setupDatabase();
 
@@ -93,6 +87,13 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, reportCommand);
         getProxy().getPluginManager().registerCommand(this, listReportsCommand);
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
+
+        endpoint = new Endpoint(26000, this);
+        try {
+            endpoint.startAPI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

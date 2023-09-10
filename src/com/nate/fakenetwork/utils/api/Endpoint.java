@@ -21,14 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Endpoint extends AbstractHandler {
-    List<ProxiedPlayer> staffMembers = getStaffWithPermission("fakenetwork.reports");
-    Core core = Core.getInstance();
-
+    private List<ProxiedPlayer> staffMembers;
+    private Core core;
     private Server server;
 
-    public Endpoint(int port) {
+    public Endpoint(int port, Core coreInstance) {
+        this.core = coreInstance;
         this.server = new Server(port);
         this.server.setHandler(this);
+        this.staffMembers = getStaffWithPermission("fakenetwork.reports");
     }
 
     public void startAPI() throws Exception {

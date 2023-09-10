@@ -6,7 +6,7 @@
 
     <groupId>com.nate.hypixel</groupId>
     <artifactId>HypixelCore</artifactId>
-    <version>1.4.9B</version>
+    <version>1.4.9G</version>
     <packaging>jar</packaging>
 
     <properties>
