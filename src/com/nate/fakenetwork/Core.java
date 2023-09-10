@@ -40,13 +40,13 @@ public class Core extends Plugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         try {
             endpoint.startAPI();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        instance = this;
         connection = setupDatabase();
 
         CreateTables createTables = new CreateTables();
