@@ -75,9 +75,9 @@ public class ReportCommand extends Command {
             }
         }
 
-        TextComponent reportMessage = new TextComponent(
-                ChatColor.RED + " Report | " + reportingUserPrefix + player.getName() + " &7reported " +
-                        reportedUserPrefix + reportedPlayer.getName() + ChatColor.RED + " for &4Hacking in &6server");
+        TextComponent reportMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
+                "&4&lReport | " + reportingUserPrefix + player.getName() + " &7reported " +
+                        reportedUserPrefix + reportedPlayer.getName() + ChatColor.RED + " for &4Hacking in &6server"));
 
         for (ProxiedPlayer staff : staffMembers) {
             staff.sendMessage(reportMessage);
