@@ -1,0 +1,10 @@
+name: HypixelCore
+author: NatesHonor
+version: 1.4.8
+main: com.nate.fakenetwork.Core
+api-version: 1.19
+
+commands:
+  kick:
+    description: Kick a player
+    usage: /link <player>

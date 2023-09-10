@@ -31,6 +31,11 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
+
+    public static Core getInstance() {
+        return instance;
+    }
+
     Endpoint endpoint = new Endpoint(26000);
 
     @Override
@@ -88,10 +93,6 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, reportCommand);
         getProxy().getPluginManager().registerCommand(this, listReportsCommand);
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
-    }
-
-    public static Core getInstance() {
-        return instance;
     }
 
     @Override
