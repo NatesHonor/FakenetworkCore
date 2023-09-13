@@ -1,7 +1,7 @@
 package com.nate.fakenetwork.utils.api;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.nate.fakenetwork.Core;
 
@@ -10,30 +10,63 @@ import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+import spark.Spark;
 
-import org.eclipse.jetty.server.Request;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class Endpoint extends AbstractHandler {
+public class Endpoint {
     private List<ProxiedPlayer> staffMembers;
     private Core core;
-    private Server server;
 
-    public Endpoint(int port, Core coreInstance) {
+    public Endpoint(Core coreInstance, int port) {
         this.core = coreInstance;
-        this.server = new Server(port);
-        this.server.setHandler(this);
         this.staffMembers = getStaffWithPermission("fakenetwork.reports");
+
+        Spark.port(port);
+        setupRoutes();
     }
 
-    public void startAPI() throws Exception {
-        server.start();
+    private void setupRoutes() {
+        Spark.post("/report", "application/json", new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                if (request.requestMethod().equals("POST")) {
+                    String reported = request.queryParams("reported");
+                    String reason = request.queryParams("reason");
+
+                    String reportedUserPrefix = getLuckPermsPrefix(reported);
+                    if (reportedUserPrefix.isEmpty()) {
+                        System.out.println("User " + reported + " not found in LuckPerms.");
+                        response.status(200);
+                        return "Report received successfully!";
+                    } else {
+                        TextComponent reportMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
+                                "&4&lReport | &cWatchdog &7reported " +
+                                        reportedUserPrefix + reported + ChatColor.RED
+                                        + " for &4" + reason + "in &6server"));
+
+                        for (ProxiedPlayer staff : staffMembers) {
+                            staff.sendMessage(reportMessage);
+                        }
+
+                        response.status(200);
+                        return "Report received successfully!";
+                    }
+                } else {
+                    response.status(405);
+                    return "Method not allowed";
+                }
+            }
+        });
+    }
+
+    public void startAPI() {
+        Spark.awaitInitialization();
+    }
+
+    public void stopAPI() {
+        Spark.stop();
     }
 
     private List<ProxiedPlayer> getStaffWithPermission(String permission) {
@@ -46,31 +79,6 @@ public class Endpoint extends AbstractHandler {
         return staffMembers;
     }
 
-    @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        if ("/report".equals(target) && baseRequest.getMethod().equals("POST")) {
-            String reported = request.getParameter("reported");
-            String reason = request.getParameter("reason");
-
-            String reportedUserPrefix = getLuckPermsPrefix(reported);
-
-            TextComponent reportMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
-                    "&4&lReport | &cWatchdog &7reported " +
-                            reportedUserPrefix + reported + ChatColor.RED
-                            + " for &4" + reason + "in &6server"));
-
-            for (ProxiedPlayer staff : staffMembers) {
-                staff.sendMessage(reportMessage);
-            }
-
-            // Send a response
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Report received successfully!");
-            baseRequest.setHandled(true);
-        }
-    }
-
     private String getLuckPermsPrefix(String username) {
         User user = LuckPermsProvider.get().getUserManager().getUser(username);
         if (user != null) {
@@ -79,11 +87,6 @@ public class Endpoint extends AbstractHandler {
                 return ChatColor.translateAlternateColorCodes('&', prefix);
             }
         }
-
         return "";
-    }
-
-    public void stopAPI() throws Exception {
-        server.stop();
     }
 }

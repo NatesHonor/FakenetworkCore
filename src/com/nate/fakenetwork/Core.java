@@ -31,7 +31,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
-    private static Endpoint endpoint;
+    private Endpoint endpoint;
 
     public static Core getInstance() {
         return instance;
@@ -42,7 +42,8 @@ public class Core extends Plugin implements Listener {
         instance = this;
 
         connection = setupDatabase();
-
+        endpoint = new Endpoint(this, 2434);
+        endpoint.startAPI();
         CreateTables createTables = new CreateTables();
         createTables.createLevelsTable();
         createTables.createReportsTable();
@@ -88,12 +89,6 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, listReportsCommand);
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
 
-        endpoint = new Endpoint(26000, this);
-        try {
-            endpoint.startAPI();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -105,13 +100,7 @@ public class Core extends Plugin implements Listener {
                 e.printStackTrace();
             }
         }
-        try {
-            if (endpoint != null) { // Check if endpoint is not null
-                endpoint.stopAPI();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        endpoint.stopAPI();
     }
 
     public Configuration getPluginConfig() throws IOException {
