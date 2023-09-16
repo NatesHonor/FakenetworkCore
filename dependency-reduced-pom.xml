@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nate.hypixel</groupId>
   <artifactId>HypixelCore</artifactId>
-  <version>1.4.9N</version>
+  <version>1.4.9O</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
