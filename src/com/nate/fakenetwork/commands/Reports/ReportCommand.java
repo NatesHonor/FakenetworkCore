@@ -2,14 +2,14 @@ package com.nate.fakenetwork.commands.Reports;
 
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.chat.*;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Command;
-
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.api.chat.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.nate.fakenetwork.Core;
 
-public class ReportCommand extends Command {
+public class ReportCommand extends Command implements Listener {
     private final Core core = Core.getInstance();
     private final Map<UUID, Long> reportCooldowns = new HashMap<>();
     private final Map<UUID, UUID> handledReports = new HashMap<>();
@@ -26,91 +26,86 @@ public class ReportCommand extends Command {
         super("report", null, "reportplayer");
     }
 
-@Override
-public void execute(CommandSender sender, String[] args) {
-    if (!(sender instanceof ProxiedPlayer)) {
-        sender.sendMessage(new TextComponent(ChatColor.RED + "This command can only be used by players."));
-        return;
-    }
+    @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent(ChatColor.RED + "This command can only be used by players."));
+            return;
+        }
 
-    ProxiedPlayer player = (ProxiedPlayer) sender;
+        ProxiedPlayer player = (ProxiedPlayer) sender;
 
-    if (args.length < 2) {
-        sender.sendMessage(new TextComponent(ChatColor.RED + "Usage: /report <player> <reason>"));
-        return;
-    }
+        if (args.length < 2) {
+            sender.sendMessage(new TextComponent(ChatColor.RED + "Usage: /report <player> <reason>"));
+            return;
+        }
 
-    ProxiedPlayer reportedPlayer = core.getProxy().getPlayer(args[0]);
-    if (reportedPlayer == null) {
-        sender.sendMessage(new TextComponent(ChatColor.RED + "Player not found."));
-        return;
-    }
+        ProxiedPlayer reportedPlayer = core.getProxy().getPlayer(args[0]);
+        if (reportedPlayer == null) {
+            sender.sendMessage(new TextComponent(ChatColor.RED + "Player not found."));
+            return;
+        }
 
-    String reason = String.join(" ", args);
-    reason = reason.replaceFirst(args[0], "").trim();
+        if (!canReport(player)) {
+            sender.sendMessage(
+                    new TextComponent(ChatColor.RED + "You can only use the report command every 30 seconds."));
+            return;
+        }
 
-    List<ProxiedPlayer> staffMembers = getStaffWithPermission("fakenetwork.reports");
+        String reason = String.join(" ", args);
+        reason = reason.replaceFirst(args[0], "").trim();
 
-    User reportingUser = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
-    User reportedUser = LuckPermsProvider.get().getUserManager().getUser(reportedPlayer.getUniqueId());
+        List<ProxiedPlayer> staffMembers = getStaffWithPermission("fakenetwork.reports");
 
-    String reportingUserPrefix = "";
-    String reportedUserPrefix = "";
+        User reportingUser = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
+        User reportedUser = LuckPermsProvider.get().getUserManager().getUser(reportedPlayer.getUniqueId());
 
-    if (reportingUser != null) {
-        for (Node node : reportingUser.getNodes()) {
-            if (node.getKey().startsWith("prefix.")) {
-                reportingUserPrefix = ChatColor.translateAlternateColorCodes('&', String.valueOf(node.getValue()));
-                break;
+        String reportingUserPrefix = "";
+        String reportedUserPrefix = "";
+
+        if (reportingUser != null) {
+            // Get the prefix from the highest priority prefix node
+            String prefixNode = reportingUser.getCachedData().getMetaData().getPrefix();
+            if (prefixNode != null) {
+                reportingUserPrefix = ChatColor.translateAlternateColorCodes('&', prefixNode);
             }
         }
-    }
 
-    if (reportedUser != null) {
-        for (Node node : reportedUser.getNodes()) {
-            if (node.getKey().startsWith("prefix.")) {
-                reportedUserPrefix = ChatColor.translateAlternateColorCodes('&', String.valueOf(node.getValue()));
-                break;
+        if (reportedUser != null) {
+            String prefixNode = reportedUser.getCachedData().getMetaData().getPrefix();
+            if (prefixNode != null) {
+                reportedUserPrefix = ChatColor.translateAlternateColorCodes('&', prefixNode);
             }
         }
+
+        TextComponent reportMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
+                "&4&lReport | " + reportingUserPrefix + player.getName() + " &7reported " +
+                        reportedUserPrefix + reportedPlayer.getName() + ChatColor.RED + " for " + reason +
+                        " in &6" + reportedPlayer.getServer().getInfo().getName()));
+
+        if (handledReports.containsKey(reportedPlayer.getUniqueId())) {
+            UUID staffHandling = handledReports.get(reportedPlayer.getUniqueId());
+            if (staffHandling.equals(player.getUniqueId())) {
+                sender.sendMessage(new TextComponent(ChatColor.RED + "You are already handling this report."));
+            } else {
+                sender.sendMessage(
+                        new TextComponent(ChatColor.RED + "A staff member is already handling this report."));
+            }
+        } else {
+            handledReports.put(reportedPlayer.getUniqueId(), player.getUniqueId());
+
+            for (ProxiedPlayer staff : staffMembers) {
+                staff.sendMessage(reportMessage);
+            }
+
+            storeReport(player.getName(), reportedPlayer.getName(), reason);
+
+            TextComponent successMessage = new TextComponent(ChatColor.GREEN + "Thank you for reporting " +
+                    ChatColor.RESET + reportedPlayer.getName() + ChatColor.GREEN
+                    + ". Staff members have been notified.");
+            sender.sendMessage(successMessage);
+        }
     }
-
-    TextComponent reportMessage = new TextComponent(ChatColor.translateAlternateColorCodes('&',
-            "&4&lReport | " + reportingUserPrefix + player.getName() + " &7reported " +
-                    reportedUserPrefix + reportedPlayer.getName() + ChatColor.RED + " for " + reason +
-                    " in &6server"));
-
-    handledReports.put(reportedPlayer.getUniqueId(), player.getUniqueId());
-
-    for (ProxiedPlayer staff : staffMembers) {
-        TextComponent clickableReport = new TextComponent(reportMessage);
-        TextComponent teleportMessage = new TextComponent(ChatColor.GREEN + " [Click to Join]");
-        teleportMessage.setClickEvent(new ClickEvent(
-                ClickEvent.Action.RUN_COMMAND,
-                "/server " + reportedPlayer.getServer().getInfo().getName()));
-
-        TextComponent hoverContent = new TextComponent(ChatColor.YELLOW + "Click to join server");
-
-        HoverEvent hoverEvent = new HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            new Text[] { new Text(hoverContent.toPlainText()) }
-        );
-
-        teleportMessage.setHoverEvent(hoverEvent);
-
-        clickableReport.addExtra(teleportMessage);
-
-        staff.sendMessage(clickableReport);
-    }
-
-    storeReport(player.getName(), reportedPlayer.getName(), reason);
-
-    TextComponent successMessage = new TextComponent(ChatColor.GREEN + "Thank you for reporting " +
-            ChatColor.RESET + reportedPlayer.getName() + ChatColor.GREEN
-            + ". Staff members have been notified.");
-    sender.sendMessage(successMessage);
-}
-
 
     private boolean canReport(ProxiedPlayer player) {
         UUID playerUUID = player.getUniqueId();
@@ -148,6 +143,24 @@ public void execute(CommandSender sender, String[] args) {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @EventHandler
+    public void onServerConnect(ServerConnectEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        if (handledReports.containsKey(playerId)) {
+            UUID reportedPlayerId = handledReports.get(playerId);
+
+            ProxiedPlayer reportedPlayer = core.getProxy().getPlayer(reportedPlayerId);
+
+            if (reportedPlayer != null) {
+                event.setTarget(reportedPlayer.getServer().getInfo());
+            }
+
+            handledReports.remove(playerId);
         }
     }
 }

@@ -2,7 +2,6 @@ package com.nate.fakenetwork.commands;
 
 import com.nate.fakenetwork.Core;
 
-import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.ChatColor;
@@ -13,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class StaffChatCommand extends Command {
     public StaffChatCommand() {
-        super("staffchat", null, "sc");
+        super("staffchat", null, "sc", "staff");
     }
 
     @Override
@@ -25,19 +24,30 @@ public class StaffChatCommand extends Command {
         }
 
         if (args.length == 0) {
-            player.sendMessage(new TextComponent(ChatColor.RED + "Usage: /staffchat <message>"));
+            listStaffMembers(player);
             return;
         }
 
+        sendToStaffChat(player, args);
+    }
+
+    private void listStaffMembers(ProxiedPlayer player) {
+        player.sendMessage(new TextComponent(ChatColor.GREEN + "Active Staff Members:"));
+        for (ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
+            if (staffMember.hasPermission("fakenetwork.staff")) {
+                User user = LuckPermsProvider.get().getUserManager().getUser(staffMember.getUniqueId());
+                String prefix = user.getCachedData().getMetaData().getPrefix();
+                player.sendMessage(
+                        new TextComponent(ChatColor.translateAlternateColorCodes('&', prefix) + staffMember.getName()));
+            }
+        }
+    }
+
+    private void sendToStaffChat(ProxiedPlayer player, String[] args) {
         String message = String.join(" ", args);
         for (ProxiedPlayer staffMember : Core.getInstance().getProxy().getPlayers()) {
-            LuckPerms luckPerms = LuckPermsProvider.get();
-            if (!(sender instanceof ProxiedPlayer)) {
-                staffMember.sendMessage(new TextComponent(ChatColor.RED + "[SERVER] " + ": " + message));
-                return;
-            }
             if (staffMember.hasPermission("fakenetwork.staff")) {
-                User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+                User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
                 String prefix = user.getCachedData().getMetaData().getPrefix();
                 staffMember.sendMessage(
                         new TextComponent(
