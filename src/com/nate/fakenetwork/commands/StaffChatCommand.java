@@ -1,7 +1,7 @@
 package com.nate.fakenetwork.commands;
 
 import com.nate.fakenetwork.Core;
-import com.nate.fakenetwork.utils.events.SendToStaffChat;
+import com.nate.fakenetwork.utils.Functions.SendToStaffChat;
 
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -24,7 +24,6 @@ public class StaffChatCommand extends Command {
     public StaffChatCommand() {
         super("staffchat", null, "sc", "staff");
 
-        // Assign priorities to groups
         groupPriorities.put("admin", 6);
         groupPriorities.put("gamemaster", 5);
         groupPriorities.put("mod", 4);
@@ -94,13 +93,14 @@ public class StaffChatCommand extends Command {
 
     private String getStaffRole(ProxiedPlayer player) {
         int priority = getStaffMemberPriority(player);
-
+        User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
+        String prefix = user.getCachedData().getMetaData().getPrefix();
         for (Map.Entry<String, Integer> entry : groupPriorities.entrySet()) {
             if (entry.getValue() == priority) {
                 return entry.getKey();
             }
         }
 
-        return "Unknown";
+        return prefix;
     }
 }

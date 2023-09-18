@@ -9,13 +9,12 @@ import java.sql.SQLException;
 import com.nate.fakenetwork.commands.LevelsCommand;
 import com.nate.fakenetwork.commands.LinkCommand;
 import com.nate.fakenetwork.commands.StaffChatCommand;
-import com.nate.fakenetwork.commands.Guilds.GuildCommandExecutor;
 import com.nate.fakenetwork.commands.Parties.PartyCommandExecutor;
 import com.nate.fakenetwork.commands.Reports.AcceptReportCommand;
 import com.nate.fakenetwork.commands.Reports.DenyReportCommand;
 import com.nate.fakenetwork.commands.Reports.ListReportsCommand;
 import com.nate.fakenetwork.commands.Reports.ReportCommand;
-import com.nate.fakenetwork.utils.api.Endpoint;
+import com.nate.fakenetwork.utils.api.WebSocket.WebSocketServer;
 import com.nate.fakenetwork.utils.events.OnPlayerJoin;
 import com.nate.fakenetwork.utils.events.OnPlayerLeave;
 import com.nate.fakenetwork.utils.events.OnServerConnect;
@@ -31,7 +30,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
-    private Endpoint endpoint;
+    private WebSocketServer webSocketServer;
 
     public static Core getInstance() {
         return instance;
@@ -42,13 +41,12 @@ public class Core extends Plugin implements Listener {
         instance = this;
 
         connection = setupDatabase();
-        endpoint = new Endpoint(this, 2434);
-        endpoint.startAPI();
         CreateTables createTables = new CreateTables();
         createTables.createLevelsTable();
         createTables.createReportsTable();
         createTables.createAcceptedReportsTable();
         createTables.createDeniedReportsTable();
+        webSocketServer = new WebSocketServer(9000);
 
         try {
             if (!getDataFolder().exists()) {
@@ -68,7 +66,6 @@ public class Core extends Plugin implements Listener {
 
         ReportCommand reportCommand = new ReportCommand();
         ListReportsCommand listReportsCommand = new ListReportsCommand();
-        GuildCommandExecutor guildCommandExecutor = new GuildCommandExecutor();
         PartyCommandExecutor partyCommandExecutor = new PartyCommandExecutor();
         LevelsCommand.LevelSetCommand levelSetCommand = new LevelsCommand().new LevelSetCommand();
         LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
@@ -84,7 +81,6 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, new DenyReportCommand());
         getProxy().getPluginManager().registerCommand(this, levelSetCommand);
         getProxy().getPluginManager().registerCommand(this, levelExpCommand);
-        getProxy().getPluginManager().registerCommand(this, guildCommandExecutor);
         getProxy().getPluginManager().registerCommand(this, reportCommand);
         getProxy().getPluginManager().registerCommand(this, listReportsCommand);
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
@@ -93,6 +89,9 @@ public class Core extends Plugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (webSocketServer != null) {
+            webSocketServer.stopWebSocketServer();
+        }
         if (connection != null) {
             try {
                 connection.close();
@@ -100,7 +99,6 @@ public class Core extends Plugin implements Listener {
                 e.printStackTrace();
             }
         }
-        endpoint.stopAPI();
     }
 
     public Configuration getPluginConfig() throws IOException {
