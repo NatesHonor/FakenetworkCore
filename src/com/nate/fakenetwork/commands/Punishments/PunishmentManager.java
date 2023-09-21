@@ -35,7 +35,8 @@ public class PunishmentManager implements Listener {
                     + "player_name VARCHAR(255),"
                     + "reason VARCHAR(255),"
                     + "mute_time TIMESTAMP,"
-                    + "unmute_time TIMESTAMP"
+                    + "unmute_time TIMESTAMP,"
+                    + "unmuted ENUM('yes', 'no') DEFAULT 'no'"
                     + ")");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,17 +91,23 @@ public class PunishmentManager implements Listener {
     public void onJoin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
         String playerName = player.getName();
+
         if (isPlayerMuted(playerName)) {
             MuteInfo muteInfo = mutedPlayers.get(playerName);
-            long remainingTime = muteInfo.unmuteTime - System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
 
-            if (!muteInfo.muteMessageSent) {
-                String muteMessage = String.format(
-                        "You have been muted for %s for %s. If your time has expired, please rejoin. You can also appeal at (sample appeal url)",
-                        formatDuration(remainingTime),
-                        muteInfo.reason);
-                player.sendMessage(new TextComponent(muteMessage));
-                muteInfo.muteMessageSent = true;
+            if (muteInfo.unmuteTime <= currentTime) {
+                setPlayerUnmuted(playerName);
+                mutedPlayers.remove(playerName);
+            } else {
+                if (!muteInfo.muteMessageSent) {
+                    String muteMessage = String.format(
+                            "You have been muted for %s for %s. If your time has expired, please rejoin. You can also appeal at (sample appeal url)",
+                            formatDuration(muteInfo.unmuteTime - currentTime),
+                            muteInfo.reason);
+                    player.sendMessage(new TextComponent(muteMessage));
+                    muteInfo.muteMessageSent = true;
+                }
             }
         }
     }
@@ -121,6 +128,7 @@ public class PunishmentManager implements Listener {
                 player.sendMessage(new TextComponent(muteMessage));
                 muteInfo.muteMessageSent = true;
             }
+
             if (!e.getMessage().startsWith("/")) {
                 e.setCancelled(true);
             }
@@ -132,14 +140,35 @@ public class PunishmentManager implements Listener {
         if (muteInfo == null) {
             return false;
         }
-
-        if (System.currentTimeMillis() >= muteInfo.unmuteTime) {
+    
+        long currentTime = System.currentTimeMillis();
+    
+        if (currentTime >= muteInfo.unmuteTime || isPlayerUnmuted(playerName)) {
             mutedPlayers.remove(playerName);
             return false;
         }
-
+    
         return true;
     }
+    
+    private boolean isPlayerUnmuted(String playerName) {
+        try (Connection connection = DriverManager.getConnection(databaseURL, databaseUsername, databasePassword)) {
+            String selectQuery = "SELECT unmuted FROM punishments_mutes WHERE player_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+                preparedStatement.setString(1, playerName);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String unmutedStatus = resultSet.getString("unmuted");
+                        return "yes".equalsIgnoreCase(unmutedStatus);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 
     private String formatDuration(long milliseconds) {
         long seconds = milliseconds / 1000;
@@ -158,6 +187,19 @@ public class PunishmentManager implements Listener {
         MuteInfo(String reason, long unmuteTime) {
             this.reason = reason;
             this.unmuteTime = unmuteTime;
+        }
+    }
+
+    public void setPlayerUnmuted(String playerName) {
+        try (Connection connection = DriverManager.getConnection(databaseURL, databaseUsername, databasePassword)) {
+            String updateQuery = "UPDATE punishments_mutes SET unmuted = ? WHERE player_name = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                preparedStatement.setString(1, "yes");
+                preparedStatement.setString(2, playerName);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
