@@ -14,6 +14,7 @@ import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
 import com.nate.fakenetwork.commands.Punishments.Mutes.MuteManager;
 import com.nate.fakenetwork.commands.Punishments.Mutes.MuteSwear;
 import com.nate.fakenetwork.commands.Punishments.SQLStatements.Warns;
+import com.nate.fakenetwork.commands.Punishments.Warns.AutoWarn;
 import com.nate.fakenetwork.commands.Reports.AcceptReportCommand;
 import com.nate.fakenetwork.commands.Reports.DenyReportCommand;
 import com.nate.fakenetwork.commands.Reports.ListReportsCommand;
@@ -67,20 +68,28 @@ public class Core extends Plugin implements Listener {
             e.printStackTrace();
         }
 
+        AutoWarn autoWarn = new AutoWarn();
+        OnPlayerJoin onPlayerJoin = new OnPlayerJoin();
         ReportCommand reportCommand = new ReportCommand();
+        OnPlayerLeave onPlayerLeave = new OnPlayerLeave();
+        OnServerConnect onServerConnect = new OnServerConnect();
+        PunishmentManager punishmentManager = new PunishmentManager();
+        SwearWordListener swearWordListener = new SwearWordListener();
         ListReportsCommand listReportsCommand = new ListReportsCommand();
         PartyCommandExecutor partyCommandExecutor = new PartyCommandExecutor();
+        StaffChatEventListener staffChatEventListener = new StaffChatEventListener();
         LevelsCommand.LevelSetCommand levelSetCommand = new LevelsCommand().new LevelSetCommand();
         LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
-        SwearWordListener swearWordListener = new SwearWordListener();
 
         getProxy().getPluginManager().registerListener(this, this);
-        getProxy().getPluginManager().registerListener(this, new OnPlayerJoin());
-        getProxy().getPluginManager().registerListener(this, new OnPlayerLeave());
-        getProxy().getPluginManager().registerListener(this, new OnServerConnect());
-        getProxy().getPluginManager().registerListener(this, new StaffChatEventListener());
+        getProxy().getPluginManager().registerListener(this, autoWarn);
+        getProxy().getPluginManager().registerListener(this, onPlayerJoin);
+        getProxy().getPluginManager().registerListener(this, onPlayerLeave);
+        getProxy().getPluginManager().registerListener(this, onServerConnect);
         getProxy().getPluginManager().registerListener(this, swearWordListener);
-        getProxy().getPluginManager().registerListener(this, new PunishmentManager());
+        getProxy().getPluginManager().registerListener(this, punishmentManager);
+        getProxy().getPluginManager().registerListener(this, staffChatEventListener);
+
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
         getProxy().getPluginManager().registerCommand(this, new AcceptReportCommand());

@@ -1,4 +1,5 @@
 com\nate\fakenetwork\commands\LevelsCommand$LevelSetCommand.class
+com\nate\fakenetwork\commands\Punishments\SQLStatements\Warns.class
 com\nate\fakenetwork\commands\Reports\ReportCommand.class
 com\nate\fakenetwork\utils\Functions\LpMethods.class
 com\nate\fakenetwork\utils\Functions\SendToReportChat.class
@@ -24,6 +25,7 @@ com\nate\fakenetwork\commands\Reports\AcceptReportCommand.class
 com\nate\fakenetwork\utils\events\OnPlayerLeave.class
 com\nate\fakenetwork\Core.class
 com\nate\fakenetwork\utils\Parties\PartyManager$Party.class
+com\nate\fakenetwork\commands\Punishments\Warns\AutoWarn.class
 com\nate\fakenetwork\utils\api\SendPlaytimeRequests.class
 com\nate\fakenetwork\commands\LevelsCommand$LevelExpCommand.class
 com\nate\fakenetwork\GetRank.class
