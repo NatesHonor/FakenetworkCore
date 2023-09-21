@@ -38,11 +38,15 @@ public class AutoWarn implements Listener {
         long currentTime = System.currentTimeMillis();
         messageTimestamps.put(playerName, currentTime);
         messageTimestamps.entrySet().removeIf(entry -> (currentTime - entry.getValue()) > 5000);
-        boolean isSpamming = messageTimestamps.size() > 3;
+        long fiveSecondsAgo = currentTime - 5000;
+        int messageCount = (int) messageTimestamps.values().stream()
+                .filter(timestamp -> timestamp >= fiveSecondsAgo)
+                .count();
+
+        boolean isSpamming = messageCount > 3;
         System.out.println(playerName + " is spamming: " + isSpamming);
         return isSpamming;
     }
-    
 
     private void issueWarning(String playerName, String reason) {
         userWarnings.put(playerName, userWarnings.getOrDefault(playerName, 0) + 1);
