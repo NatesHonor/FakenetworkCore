@@ -10,15 +10,19 @@ import com.nate.fakenetwork.commands.LevelsCommand;
 import com.nate.fakenetwork.commands.LinkCommand;
 import com.nate.fakenetwork.commands.StaffChatCommand;
 import com.nate.fakenetwork.commands.Parties.PartyCommandExecutor;
+import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
+import com.nate.fakenetwork.commands.Punishments.Mutes.MuteManager;
+import com.nate.fakenetwork.commands.Punishments.Mutes.MuteSwear;
+import com.nate.fakenetwork.commands.Punishments.SQLStatements.Warns;
 import com.nate.fakenetwork.commands.Reports.AcceptReportCommand;
 import com.nate.fakenetwork.commands.Reports.DenyReportCommand;
 import com.nate.fakenetwork.commands.Reports.ListReportsCommand;
 import com.nate.fakenetwork.commands.Reports.ReportCommand;
-import com.nate.fakenetwork.utils.api.WebSocket.WebSocketServer;
 import com.nate.fakenetwork.utils.events.OnPlayerJoin;
 import com.nate.fakenetwork.utils.events.OnPlayerLeave;
 import com.nate.fakenetwork.utils.events.OnServerConnect;
 import com.nate.fakenetwork.utils.events.StaffChatEventListener;
+import com.nate.fakenetwork.utils.events.SwearWordListener;
 import com.nate.fakenetwork.utils.storage.mysql.CreateTables;
 
 import net.md_5.bungee.api.plugin.Listener;
@@ -30,7 +34,6 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
-    private WebSocketServer webSocketServer;
 
     public static Core getInstance() {
         return instance;
@@ -42,12 +45,12 @@ public class Core extends Plugin implements Listener {
 
         connection = setupDatabase();
         CreateTables createTables = new CreateTables();
+        Warns warns = new Warns();
+        warns.createWarnsTable();
         createTables.createLevelsTable();
         createTables.createReportsTable();
         createTables.createAcceptedReportsTable();
         createTables.createDeniedReportsTable();
-        webSocketServer = new WebSocketServer(9000);
-
         try {
             if (!getDataFolder().exists()) {
                 getDataFolder().mkdir();
@@ -69,12 +72,15 @@ public class Core extends Plugin implements Listener {
         PartyCommandExecutor partyCommandExecutor = new PartyCommandExecutor();
         LevelsCommand.LevelSetCommand levelSetCommand = new LevelsCommand().new LevelSetCommand();
         LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
+        SwearWordListener swearWordListener = new SwearWordListener();
 
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, new OnPlayerJoin());
         getProxy().getPluginManager().registerListener(this, new OnPlayerLeave());
         getProxy().getPluginManager().registerListener(this, new OnServerConnect());
         getProxy().getPluginManager().registerListener(this, new StaffChatEventListener());
+        getProxy().getPluginManager().registerListener(this, swearWordListener);
+        getProxy().getPluginManager().registerListener(this, new PunishmentManager());
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
         getProxy().getPluginManager().registerCommand(this, new AcceptReportCommand());
@@ -84,14 +90,12 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, reportCommand);
         getProxy().getPluginManager().registerCommand(this, listReportsCommand);
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
-
+        getProxy().getPluginManager().registerCommand(this, new MuteManager());
+        getProxy().getPluginManager().registerCommand(this, new MuteSwear());
     }
 
     @Override
     public void onDisable() {
-        if (webSocketServer != null) {
-            webSocketServer.stopWebSocketServer();
-        }
         if (connection != null) {
             try {
                 connection.close();

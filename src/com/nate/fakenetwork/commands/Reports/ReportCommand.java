@@ -64,7 +64,6 @@ public class ReportCommand extends Command implements Listener {
         String reportedUserPrefix = "";
 
         if (reportingUser != null) {
-            // Get the prefix from the highest priority prefix node
             String prefixNode = reportingUser.getCachedData().getMetaData().getPrefix();
             if (prefixNode != null) {
                 reportingUserPrefix = ChatColor.translateAlternateColorCodes('&', prefixNode);
