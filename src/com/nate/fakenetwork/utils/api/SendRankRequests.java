@@ -8,8 +8,6 @@ import java.util.UUID;
 
 import com.nate.fakenetwork.Core;
 
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
 
 public class SendRankRequests {
     public static void sendRankRequest(UUID playerUUID, String rank) {
@@ -35,11 +33,7 @@ public class SendRankRequests {
 
             conn.setDoOutput(true);
 
-            User user = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
-            String currentRank = user == null ? "default" : user.getPrimaryGroup();
-
-            String jsonInputString = "{\"playerUUID\": \"" + playerUUID.toString() + "\", \"currentRank\": \""
-                    + currentRank + "\", \"newRank\": \"" + rank + "\"}";
+            String jsonInputString = "{\"playerUUID\": \"" + playerUUID.toString() + "\", \"rank\": \"" + rank + "\"}";
 
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
