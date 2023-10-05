@@ -1,4 +1,4 @@
-package com.nate.fakenetwork.commands;
+package com.nate.fakenetwork.commands.CrossLink;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

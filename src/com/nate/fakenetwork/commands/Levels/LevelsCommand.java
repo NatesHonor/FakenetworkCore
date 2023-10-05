@@ -1,4 +1,4 @@
-package com.nate.fakenetwork.commands;
+package com.nate.fakenetwork.commands.Levels;
 
 import java.util.UUID;
 

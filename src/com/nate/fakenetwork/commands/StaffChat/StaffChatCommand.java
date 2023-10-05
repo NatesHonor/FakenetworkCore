@@ -1,4 +1,4 @@
-package com.nate.fakenetwork.commands;
+package com.nate.fakenetwork.commands.StaffChat;
 
 import com.nate.fakenetwork.Core;
 import com.nate.fakenetwork.utils.Functions.SendToStaffChat;

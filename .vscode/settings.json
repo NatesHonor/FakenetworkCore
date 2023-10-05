@@ -29,7 +29,8 @@
         "setlevel",
         "staffchat",
         "tagcolor",
-        "unmute"
+        "unmute",
+        "unmuted"
     ],
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.configuration.runtimes": [

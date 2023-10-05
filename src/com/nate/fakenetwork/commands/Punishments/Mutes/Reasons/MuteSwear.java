@@ -1,4 +1,4 @@
-package com.nate.fakenetwork.commands.Punishments.Mutes;
+package com.nate.fakenetwork.commands.Punishments.Mutes.Reasons;
 
 import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
 
