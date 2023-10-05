@@ -6,7 +6,7 @@
 
     <groupId>com.nate.hypixel</groupId>
     <artifactId>HypixelCore</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.1A</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -79,7 +79,7 @@
 <dependency>
     <groupId>com.zaxxer</groupId>
     <artifactId>HikariCP</artifactId>
-    <version>4.0.3</version> <!-- Use the latest version -->
+    <version>4.0.3</version>
 </dependency>
 
     </dependencies>

@@ -20,12 +20,12 @@ public class PunishmentManager implements Listener {
     private String databaseUsername = "root";
     private String databasePassword = "";
     private Map<String, MuteInfo> mutedPlayers = new HashMap<>();
-    Mutes mutes = new Mutes();
+
 
     public PunishmentManager() {
         Core.getInstance().getProxy().getPluginManager().registerListener(Core.getInstance(), this);
         createTables();
-        mutes.loadMutedPlayers();
+        Mutes.loadMutedPlayers();
     }
 
     private void createTables() {
@@ -61,7 +61,7 @@ public class PunishmentManager implements Listener {
             long currentTime = System.currentTimeMillis();
 
             if (muteInfo.unmuteTime <= currentTime) {
-                mutes.setPlayerUnmuted(playerName);
+                Mutes.setPlayerUnmuted(playerName);
                 mutedPlayers.remove(playerName);
             } else {
                 if (!muteInfo.muteMessageSent) {
@@ -107,7 +107,7 @@ public class PunishmentManager implements Listener {
 
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime >= muteInfo.unmuteTime || !mutes.isPlayerUnmuted(playerName)) {
+        if (currentTime >= muteInfo.unmuteTime || !Mutes.isPlayerUnmuted(playerName)) {
             mutedPlayers.remove(playerName);
             return false;
         }

@@ -10,11 +10,11 @@ import com.nate.fakenetwork.utils.Functions.DatabaseConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class Mutes {
-    private HikariDataSource dataSource;
-    PunishmentManager punishmentManager = new PunishmentManager();
+    private static HikariDataSource dataSource;
+    static PunishmentManager punishmentManager = new PunishmentManager();
 
     public Mutes() {
-        this.dataSource = DatabaseConfig.getDataSource();
+        Mutes.dataSource = DatabaseConfig.getDataSource();
     }
 
     public void applyMute(String playerName, String reason, int durationInDays) {
@@ -39,7 +39,7 @@ public class Mutes {
         }
     }
 
-    public boolean isPlayerUnmuted(String playerName) {
+    public static boolean isPlayerUnmuted(String playerName) {
         try (Connection connection = dataSource.getConnection()) {
             String selectQuery = "SELECT unmuted FROM punishments_mutes WHERE player_name = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -57,7 +57,7 @@ public class Mutes {
         return false;
     }
 
-    public void setPlayerUnmuted(String playerName) {
+    public static void setPlayerUnmuted(String playerName) {
         try (Connection connection = dataSource.getConnection()) {
             String updateQuery = "UPDATE punishments_mutes SET unmuted = ? WHERE player_name = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
@@ -70,7 +70,7 @@ public class Mutes {
         }
     }
 
-    public void loadMutedPlayers() {
+    public static void loadMutedPlayers() {
         try (Connection connection = dataSource.getConnection()) {
             String selectQuery = "SELECT player_name, reason, unmute_time FROM punishments_mutes WHERE unmute_time > ?";
             long currentTime = System.currentTimeMillis();
