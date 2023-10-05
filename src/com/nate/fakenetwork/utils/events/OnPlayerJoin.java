@@ -42,6 +42,6 @@ public class OnPlayerJoin implements Listener {
         int level = levels.getLevel(playerId);
         String rank = getRank.getRank(playerName);
         sendLevelRequests.sendLevelRequest(playerName, level);
-        SendRankRequests.sendRankRequest(playerName, rank);
+        SendRankRequests.sendRankRequest(playerId, rank);
     }
 }
