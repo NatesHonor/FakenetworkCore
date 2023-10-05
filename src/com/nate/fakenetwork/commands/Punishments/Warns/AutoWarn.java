@@ -1,6 +1,5 @@
 package com.nate.fakenetwork.commands.Punishments.Warns;
 
-import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
 
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -49,8 +48,8 @@ public class AutoWarn implements Listener {
         userWarnings.put(playerName, userWarnings.getOrDefault(playerName, 0) + 1);
         int warnings = userWarnings.getOrDefault(playerName, 0);
         if (warnings >= 5) {
-            PunishmentManager punishmentManager = new PunishmentManager();
-            punishmentManager.applyMute(playerName, "Spamming", 12 * 60);
+            Mutes mutes = new Mutes();
+            mutes.applyMute(playerName, "Spamming", 12 * 60);
             userWarnings.put(playerName, 0);
         } else {
             ProxiedPlayer player = Core.getInstance().getProxy().getPlayer(playerName);

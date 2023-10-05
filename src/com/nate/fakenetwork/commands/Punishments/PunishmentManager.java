@@ -44,27 +44,6 @@ public class PunishmentManager implements Listener {
         }
     }
 
-    public void applyMute(String playerName, String reason, int durationInDays) {
-        try (Connection connection = DriverManager.getConnection(databaseURL, databaseUsername, databasePassword)) {
-            String insertQuery = "INSERT INTO punishments_mutes (player_name, reason, mute_time, unmute_time) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                preparedStatement.setString(1, playerName);
-                preparedStatement.setString(2, reason);
-
-                long currentTime = System.currentTimeMillis();
-                long unmuteTime = currentTime + durationInDays * 24L * 60 * 60 * 1000;
-
-                preparedStatement.setTimestamp(3, new java.sql.Timestamp(currentTime));
-                preparedStatement.setTimestamp(4, new java.sql.Timestamp(unmuteTime));
-
-                preparedStatement.executeUpdate();
-
-                mutedPlayers.put(playerName, new MuteInfo(reason, unmuteTime));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void putMap(String playername, String reason, Long unmuteTime) {
         MuteInfo muteInfo = new MuteInfo(reason, 0);
