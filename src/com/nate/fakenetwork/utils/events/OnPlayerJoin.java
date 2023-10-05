@@ -3,7 +3,6 @@ package com.nate.fakenetwork.utils.events;
 import java.util.UUID;
 
 import com.nate.fakenetwork.Core;
-import com.nate.fakenetwork.GetRank;
 import com.nate.fakenetwork.utils.api.SendJoinRequests;
 import com.nate.fakenetwork.utils.api.SendLevelRequests;
 import com.nate.fakenetwork.utils.api.SendRankRequests;
@@ -12,6 +11,8 @@ import com.nate.fakenetwork.utils.storage.mysql.CreateTables;
 import com.nate.fakenetwork.utils.storage.mysql.Levels;
 import com.nate.fakenetwork.utils.storage.mysql.Playtime;
 
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -26,7 +27,6 @@ public class OnPlayerJoin implements Listener {
         Playtime playtime = new Playtime();
         Levels levels = new Levels();
         CreateTables createTables = new CreateTables();
-        GetRank getRank = new GetRank(Core.getInstance());
         createTables.addPlayerToLevelsTable(playerId, playerName, 1, 1);
 
         if (!playerStartTimes.containsKey(playerId)) {
@@ -40,8 +40,20 @@ public class OnPlayerJoin implements Listener {
         sendJoinRequests.sendJoinRequest(playerName);
 
         int level = levels.getLevel(playerId);
-        String rank = getRank.getRank(playerName);
+        String rank = getLuckPermsRank(playerName);
         sendLevelRequests.sendLevelRequest(playerName, level);
         SendRankRequests.sendRankRequest(playerId, rank);
     }
+
+    private String getLuckPermsRank(String playerName) {
+        UUID playerUUID = Core.getInstance().getProxy().getPlayer(playerName).getUniqueId();
+        User user = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
+
+        if (user == null) {
+            return "Default";
+        }
+
+        return user.getPrimaryGroup();
+    }
+
 }
