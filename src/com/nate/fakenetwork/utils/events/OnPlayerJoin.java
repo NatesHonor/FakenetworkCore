@@ -43,7 +43,7 @@ public class OnPlayerJoin implements Listener {
         String rank = getLuckPermsRank(playerName);
         sendLevelRequests.sendLevelRequest(playerName, level);
         Core.getInstance().getLogger().info(playerId + ":" + playerName + "Rank:" + rank);
-        SendRankRequests.sendRankRequest(playerId, rank);
+        SendRankRequests.sendRankRequest(playerName, rank);
     }
 
     private String getLuckPermsRank(String playerName) {

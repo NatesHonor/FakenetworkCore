@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.UUID;
 
 import com.nate.fakenetwork.Core;
 
 
+
 public class SendRankRequests {
-    public static void sendRankRequest(UUID playerUUID, String rank) {
+    public static void sendRankRequest(String playerName, String rank) {
         Core core = Core.getInstance();
         try {
             String apiUrl = core.getPluginConfig().getString("api");
@@ -33,7 +33,7 @@ public class SendRankRequests {
 
             conn.setDoOutput(true);
 
-            String jsonInputString = "{\"playerUUID\": \"" + playerUUID.toString() + "\", \"rank\": \"" + rank + "\"}";
+            String jsonInputString = "{\"playerName\": \"" + playerName + "\", \"rank\": \"" + rank + "\"}";
 
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
