@@ -5,10 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import com.nate.fakenetwork.Core;
-import com.nate.fakenetwork.GetRank;
 
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -17,8 +19,6 @@ public class LinkCommand extends Command {
     String jdbcUrl = "jdbc:mysql://localhost:3306/link?useSSL=false&serverTimezone=UTC";
     String username = "root";
     String password = "";
-
-    GetRank getRank = new GetRank(Core.getInstance());
 
     Connection connection = null;
     PreparedStatement statement = null;
@@ -42,7 +42,7 @@ public class LinkCommand extends Command {
             String discordUserId = getDiscordUserIdFromToken(token);
 
             if (discordUserId != null) {
-                String rank = getHypixelRank(sender.getName());
+                String rank = getLuckPermsRank(sender.getName());
                 String minecraftUsername = sender.getName();
                 String playtime = getPlaytime(minecraftUsername);
 
@@ -87,8 +87,15 @@ public class LinkCommand extends Command {
         }
     }
 
-    private String getHypixelRank(String player) {
-        return getRank.getRank(player);
+    private String getLuckPermsRank(String playerName) {
+        UUID playerUUID = Core.getInstance().getProxy().getPlayer(playerName).getUniqueId();
+        User user = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
+
+        if (user == null) {
+            return "Default";
+        }
+
+        return user.getPrimaryGroup();
     }
 
     private String getPlaytime(String minecraftUsername) {

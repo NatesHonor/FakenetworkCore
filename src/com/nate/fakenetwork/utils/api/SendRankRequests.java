@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 import com.nate.fakenetwork.Core;
 
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
+
 public class SendRankRequests {
-    public static void sendRankRequest(String playerName, String rank) {
+    public static void sendRankRequest(UUID playerUUID, String rank) {
         Core core = Core.getInstance();
         try {
             String apiUrl = core.getPluginConfig().getString("api");
@@ -31,7 +35,11 @@ public class SendRankRequests {
 
             conn.setDoOutput(true);
 
-            String jsonInputString = "{\"playerName\": \"" + playerName + "\", \"rank\": \"" + rank + "\"}";
+            User user = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
+            String currentRank = user == null ? "default" : user.getPrimaryGroup();
+
+            String jsonInputString = "{\"playerUUID\": \"" + playerUUID.toString() + "\", \"currentRank\": \""
+                    + currentRank + "\", \"newRank\": \"" + rank + "\"}";
 
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
