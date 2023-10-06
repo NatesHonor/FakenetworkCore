@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.nate.fakenetwork.commands.CrossLink.LinkCommand;
+import com.nate.fakenetwork.commands.Debugging.DebugHashmap;
 import com.nate.fakenetwork.commands.Levels.LevelsCommand;
 import com.nate.fakenetwork.commands.Parties.PartyCommandExecutor;
 import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
@@ -78,6 +79,7 @@ public class Core extends Plugin implements Listener {
         StaffChatEventListener staffChatEventListener = new StaffChatEventListener();
         LevelsCommand.LevelSetCommand levelSetCommand = new LevelsCommand().new LevelSetCommand();
         LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
+        DebugHashmap debugHashmap = new DebugHashmap(this, punishmentManager);
 
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
@@ -98,6 +100,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
         getProxy().getPluginManager().registerCommand(this, new MuteManager());
         getProxy().getPluginManager().registerCommand(this, new MuteSwear());
+        getProxy().getPluginManager().registerCommand(this, debugHashmap);
     }
 
     @Override
