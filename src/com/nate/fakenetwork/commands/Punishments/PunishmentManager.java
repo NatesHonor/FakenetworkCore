@@ -47,9 +47,9 @@ public class PunishmentManager implements Listener {
     public Map<String, MuteInfo> getMutedPlayers() {
         return mutedPlayers;
     }
-    
+
     public void putMap(String playername, String reason, Long unmuteTime) {
-        MuteInfo muteInfo = new MuteInfo(reason, 0);
+        MuteInfo muteInfo = new MuteInfo(reason, unmuteTime);
 
         mutedPlayers.put(playername, muteInfo);
     }
