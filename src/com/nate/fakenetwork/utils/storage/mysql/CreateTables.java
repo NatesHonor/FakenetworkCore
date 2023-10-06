@@ -46,6 +46,7 @@ public class CreateTables {
         }
     }
 
+    
     public void addPlayerToLevelsTable(UUID playerUUID, String playerName, int level, int eventLevel) {
         try {
             PreparedStatement checkStatement = core.getConnection().prepareStatement(
