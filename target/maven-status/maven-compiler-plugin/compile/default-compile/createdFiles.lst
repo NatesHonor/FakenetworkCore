@@ -22,11 +22,9 @@ com\nate\fakenetwork\utils\events\OnServerConnect.class
 com\nate\fakenetwork\utils\storage\hashmaps\PlayerStartTimes.class
 com\nate\fakenetwork\commands\Punishments\Mutes\Reasons\MuteSwear.class
 com\nate\fakenetwork\commands\Reports\AcceptReportCommand.class
-com\nate\fakenetwork\commands\Punishments\Warns\Mutes.class
 com\nate\fakenetwork\utils\events\OnPlayerLeave.class
 com\nate\fakenetwork\Core.class
 com\nate\fakenetwork\utils\Parties\PartyManager$Party.class
-com\nate\fakenetwork\commands\Punishments\Warns\AutoWarn.class
 com\nate\fakenetwork\utils\api\SendPlaytimeRequests.class
 com\nate\fakenetwork\commands\Levels\LevelsCommand.class
 com\nate\fakenetwork\utils\api\SendRankRequests.class
