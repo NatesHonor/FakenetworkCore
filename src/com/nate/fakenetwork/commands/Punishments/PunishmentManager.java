@@ -83,10 +83,10 @@ public class PunishmentManager implements Listener {
     public void onChat(ChatEvent e) {
         ProxiedPlayer player = (ProxiedPlayer) e.getSender();
         String playerName = player.getName();
+        String message = e.getMessage();
         if (isPlayerMuted(playerName)) {
             MuteInfo muteInfo = mutedPlayers.get(playerName);
             long remainingTime = muteInfo.unmuteTime - System.currentTimeMillis();
-
             if (!muteInfo.muteMessageSent) {
                 String muteMessage = String.format(
                         "You have been muted for %s for %s. If your time has expired, please rejoin. You can also appeal at (sample appeal url)",
@@ -95,8 +95,7 @@ public class PunishmentManager implements Listener {
                 player.sendMessage(new TextComponent(muteMessage));
                 muteInfo.muteMessageSent = true;
             }
-
-            if (!e.getMessage().startsWith("/")) {
+            if (!message.startsWith("/")) {
                 e.setCancelled(true);
             }
         }
