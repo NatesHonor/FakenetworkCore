@@ -6,6 +6,7 @@ import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -79,22 +80,12 @@ public class PunishmentManager implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(ChatEvent e) {
         ProxiedPlayer player = (ProxiedPlayer) e.getSender();
         String playerName = player.getName();
         String message = e.getMessage();
         if (isPlayerMuted(playerName)) {
-            MuteInfo muteInfo = mutedPlayers.get(playerName);
-            long remainingTime = muteInfo.unmuteTime - System.currentTimeMillis();
-            if (!muteInfo.muteMessageSent) {
-                String muteMessage = String.format(
-                        "You have been muted for %s for %s. If your time has expired, please rejoin. You can also appeal at (sample appeal url)",
-                        formatDuration(remainingTime),
-                        muteInfo.reason);
-                player.sendMessage(new TextComponent(muteMessage));
-                muteInfo.muteMessageSent = true;
-            }
             if (!message.startsWith("/")) {
                 e.setCancelled(true);
             }
@@ -106,14 +97,11 @@ public class PunishmentManager implements Listener {
         if (muteInfo == null) {
             return false;
         }
-
         long currentTime = System.currentTimeMillis();
-
         if (currentTime >= muteInfo.unmuteTime || mutes.isPlayerUnmuted(playerName)) {
             mutedPlayers.remove(playerName);
             return false;
         }
-
         return true;
     }
 
