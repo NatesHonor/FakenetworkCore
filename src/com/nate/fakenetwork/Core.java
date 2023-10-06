@@ -13,7 +13,6 @@ import com.nate.fakenetwork.commands.Punishments.PunishmentManager;
 import com.nate.fakenetwork.commands.Punishments.Mutes.MuteManager;
 import com.nate.fakenetwork.commands.Punishments.Mutes.Reasons.MuteSwear;
 import com.nate.fakenetwork.commands.Punishments.SQLStatements.Warns;
-import com.nate.fakenetwork.commands.Punishments.Warns.AutoWarn;
 import com.nate.fakenetwork.commands.Reports.AcceptReportCommand;
 import com.nate.fakenetwork.commands.Reports.DenyReportCommand;
 import com.nate.fakenetwork.commands.Reports.ListReportsCommand;
@@ -68,7 +67,6 @@ public class Core extends Plugin implements Listener {
             e.printStackTrace();
         }
 
-        AutoWarn autoWarn = new AutoWarn();
         OnPlayerJoin onPlayerJoin = new OnPlayerJoin();
         ReportCommand reportCommand = new ReportCommand();
         OnPlayerLeave onPlayerLeave = new OnPlayerLeave();
@@ -82,7 +80,6 @@ public class Core extends Plugin implements Listener {
         LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
 
         getProxy().getPluginManager().registerListener(this, this);
-        getProxy().getPluginManager().registerListener(this, autoWarn);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
         getProxy().getPluginManager().registerListener(this, onPlayerLeave);
         getProxy().getPluginManager().registerListener(this, onServerConnect);

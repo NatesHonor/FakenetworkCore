@@ -1,6 +1,6 @@
 package com.nate.fakenetwork.commands.Punishments.Mutes.Reasons;
 
-import com.nate.fakenetwork.commands.Punishments.Warns.Mutes;
+import com.nate.fakenetwork.commands.Punishments.SQLStatements.Mutes;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;

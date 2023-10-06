@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nate.hypixel</groupId>
   <artifactId>HypixelCore</artifactId>
-  <version>1.4.9R</version>
+  <version>1.6.1B</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -51,12 +51,6 @@
     </repository>
   </repositories>
   <dependencies>
-    <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.17-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>io.github.waterfallmc</groupId>
       <artifactId>waterfall-api</artifactId>
