@@ -44,7 +44,6 @@ public class PunishmentManager implements Listener {
         }
     }
 
-
     public void putMap(String playername, String reason, Long unmuteTime) {
         MuteInfo muteInfo = new MuteInfo(reason, 0);
 
@@ -107,7 +106,7 @@ public class PunishmentManager implements Listener {
 
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime >= muteInfo.unmuteTime || !mutes.isPlayerUnmuted(playerName)) {
+        if (currentTime >= muteInfo.unmuteTime || mutes.isPlayerUnmuted(playerName)) {
             mutedPlayers.remove(playerName);
             return false;
         }
