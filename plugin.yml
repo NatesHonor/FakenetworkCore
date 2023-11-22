@@ -1,7 +1,7 @@
 name: nBungeeStaff
 author: NatesHonor
-version: 1.6.1I
-main: com.nate.fakenetwork.Core
+version: 1.0.0-BETA
+main: com.nate.nbungeestaff.Core
 api-version: 1.19
 
 commands:

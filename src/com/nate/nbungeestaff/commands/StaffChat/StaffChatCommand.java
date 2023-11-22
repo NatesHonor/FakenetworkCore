@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.nate.nbungeestaff.utils.Functions.SendToStaffChat;
 
 public class StaffChatCommand extends Command {
     private final Map<String, Integer> groupPriorities = new HashMap<>();
+    Core core = Core.getInstance();
 
     public StaffChatCommand() {
         super("staffchat", null, "sc", "staff");
@@ -35,7 +37,7 @@ public class StaffChatCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         ProxiedPlayer player = (ProxiedPlayer) sender;
-        if (!player.hasPermission("fakenetwork.staff")) {
+        if (!player.hasPermission("nbungee.staff")) {
             player.sendMessage(new TextComponent(ChatColor.RED + "You do not have permission to use this command."));
             return;
         }
@@ -62,11 +64,18 @@ public class StaffChatCommand extends Command {
 
         player.sendMessage(new TextComponent(ChatColor.GREEN + "Active Staff Members:"));
         for (ProxiedPlayer staffMember : staffMembers) {
-            String staffRole = getStaffRole(staffMember);
-            String prefix = ChatColor.translateAlternateColorCodes('&', "&7[" + staffRole + "&7]");
-            BaseComponent[] components = TextComponent
-                    .fromLegacyText(prefix + staffMember.getName());
-            player.sendMessage(components);
+            try {
+                if (core.getPluginConfig().getBoolean("") == true) {
+                    String staffRole = getStaffRole(staffMember);
+                    String prefix = ChatColor.translateAlternateColorCodes('&', "&7[" + staffRole + "&7]");
+                    BaseComponent[] components = TextComponent
+                            .fromLegacyText(prefix + staffMember.getName());
+                    player.sendMessage(components);
+                } else {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
