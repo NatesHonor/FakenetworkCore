@@ -37,7 +37,7 @@
     "java.configuration.runtimes": [
         {
             "name": "JavaSE-1.8",
-            "path": "C:\\Program Files (x86)\\OpenLogic\\jdk-8.0.382.05-hotspot"
+            "path": "C:\\Program Files\\Java\\jre1.8.0_202"
         }
     ]
 }
