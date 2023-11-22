@@ -1,4 +1,4 @@
-# Fake Network Plugin Documentation
+# nBungeeStaff Plugin Documentation
 
 This documentation provides an overview of various systems and features implemented in the Hypixel Network plugin.
 
