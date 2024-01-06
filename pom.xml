@@ -5,8 +5,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nate.hypixel</groupId>
-    <artifactId>nBungeeStaff</artifactId>
-    <version>1.0.0-BETA</version>
+    <artifactId>HypixelCore</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -34,7 +34,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.1.0</version>
+            <version>8.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.luckperms</groupId>

@@ -1,7 +1,7 @@
 name: nBungeeStaff
 author: NatesHonor
 version: 1.0.0-BETA
-main: com.nate.nbungeestaff.Core
+main: com.nate.bungee.Core
 api-version: 1.19
 
 commands:

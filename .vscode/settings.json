@@ -1,10 +1,12 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
+        "acceptreport",
         "addexp",
         "cooldown",
         "Cooldowns",
         "Crims",
+        "denyreport",
         "Gamemaster",
         "Hikari",
         "hypixel",
