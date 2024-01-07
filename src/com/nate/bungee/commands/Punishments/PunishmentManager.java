@@ -98,7 +98,7 @@ public class PunishmentManager implements Listener {
             return false;
         }
         long currentTime = System.currentTimeMillis();
-        if (currentTime >= muteInfo.unmuteTime || mutes.isPlayerUnmuted(playerName)) {
+        if (currentTime >= muteInfo.unmuteTime || mutes.isPlayerMuted(playerName)) {
             mutedPlayers.remove(playerName);
             return false;
         }

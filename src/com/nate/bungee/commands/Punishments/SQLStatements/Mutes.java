@@ -39,16 +39,15 @@ public class Mutes {
         }
     }
 
-    public boolean isPlayerUnmuted(String playerName) {
-        try (Connection connection = dataSource.getConnection()) {
-            String selectQuery = "SELECT unmuted FROM punishments_mutes WHERE player_name = ?";
+    public boolean isPlayerMuted(String playerName) {
+        try (Connection connection = Mutes.dataSource.getConnection()) {
+            String selectQuery = "SELECT 1 FROM punishments_mutes WHERE player_name = ? AND unmute_time > ? AND (unmuted IS NULL OR unmuted = 'no')";
+            long currentTime = System.currentTimeMillis();
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
                 preparedStatement.setString(1, playerName);
+                preparedStatement.setTimestamp(2, new java.sql.Timestamp(currentTime));
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        String unmutedStatus = resultSet.getString("unmuted");
-                        return "yes".equalsIgnoreCase(unmutedStatus);
-                    }
+                    return resultSet.next();
                 }
             }
         } catch (SQLException e) {
@@ -56,6 +55,7 @@ public class Mutes {
         }
         return false;
     }
+    
 
     public void setPlayerUnmuted(String playerName) {
         try (Connection connection = dataSource.getConnection()) {

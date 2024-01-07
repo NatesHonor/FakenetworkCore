@@ -1,5 +1,6 @@
 package com.nate.bungee.utils.events;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -35,7 +36,7 @@ public class OnServerStop implements Listener {
 
     private boolean isServerStopReason(String reason) {
         String lowerCaseReason = reason.toLowerCase();
-        return lowerCaseReason.equals("could not connect to target server, you have been moved to a fallback server.");
+        return lowerCaseReason.contains("server closed");
     }
 
     private void redirectPlayer(ProxiedPlayer player, boolean showMessage) {
@@ -53,8 +54,16 @@ public class OnServerStop implements Listener {
 
         player.connect(ProxyServer.getInstance().getServerInfo(lobby));
         if (showMessage) {
-            player.sendMessage(new TextComponent(
-                    "§c§lThe server you were in has gone down and you have been redirected to one of our hubs!"));
+            TextComponent message = new TextComponent(
+                    "The server you were in has gone down and you have been redirected to one of our hubs!");
+            message.setColor(ChatColor.RED);
+            message.setBold(true);
+            player.sendMessage(message);
+        } else {
+            TextComponent message = new TextComponent("Successfully Redirected to one of our lobbies!");
+            message.setColor(ChatColor.GREEN);
+            message.setBold(true);
+            player.sendMessage(message);
         }
     }
 

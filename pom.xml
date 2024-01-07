@@ -6,7 +6,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
     <groupId>com.nate.hypixel</groupId>
     <artifactId>HypixelCore</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0B</version>
     <packaging>jar</packaging>
 
     <properties>

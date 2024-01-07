@@ -22,7 +22,6 @@ import com.nate.bungee.commands.Reports.ReportCommand;
 import com.nate.bungee.commands.StaffChat.StaffChatCommand;
 import com.nate.bungee.utils.events.OnPlayerJoin;
 import com.nate.bungee.utils.events.OnPlayerLeave;
-import com.nate.bungee.utils.events.OnServerConnect;
 import com.nate.bungee.utils.events.OnServerStop;
 import com.nate.bungee.utils.events.StaffChatEventListener;
 import com.nate.bungee.utils.events.SwearWordListener;
@@ -73,7 +72,6 @@ public class Core extends Plugin implements Listener {
         OnPlayerJoin onPlayerJoin = new OnPlayerJoin();
         ReportCommand reportCommand = new ReportCommand();
         OnPlayerLeave onPlayerLeave = new OnPlayerLeave();
-        OnServerConnect onServerConnect = new OnServerConnect();
         PunishmentManager punishmentManager = new PunishmentManager();
         SwearWordListener swearWordListener = new SwearWordListener();
         ListReportsCommand listReportsCommand = new ListReportsCommand();
@@ -84,15 +82,16 @@ public class Core extends Plugin implements Listener {
         DebugHashmap debugHashmap = new DebugHashmap(this, punishmentManager);
         OnServerStop onServerStop = new OnServerStop();
         HubCommand hubCommand = new HubCommand(onServerStop);
-
+        MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
+        
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
         getProxy().getPluginManager().registerListener(this, onPlayerLeave);
-        getProxy().getPluginManager().registerListener(this, onServerConnect);
         getProxy().getPluginManager().registerListener(this, swearWordListener);
         getProxy().getPluginManager().registerListener(this, punishmentManager);
         getProxy().getPluginManager().registerListener(this, staffChatEventListener);
         getProxy().getPluginManager().registerListener(this, onServerStop);
+        getProxy().getPluginManager().registerListener(this, muteManagerChatListener);
 
         getProxy().getPluginManager().registerCommand(this, hubCommand);
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
