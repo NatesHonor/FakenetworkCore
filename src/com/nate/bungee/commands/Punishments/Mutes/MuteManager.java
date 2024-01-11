@@ -35,7 +35,7 @@ public class MuteManager extends Command {
 
             TextComponent swearing = createReason("Swearing", playerName, "mswear");
             TextComponent disrespect = createReason("Disrespect", playerName, "mdisrespect");
-            TextComponent spamming = createReason("Spamming", playerName, "mspamming");
+            TextComponent spamming = createReason("Spamming", playerName, "mspam");
             TextComponent harassment = createReason("Harassment", playerName, "mharassment");
 
             BaseComponent[] reasons = new BaseComponent[] { swearing, disrespect, spamming, harassment };

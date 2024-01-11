@@ -1,7 +1,10 @@
 package com.nate.bungee.commands.StaffChat;
 
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.NodeType;
+import net.luckperms.api.node.types.InheritanceNode;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -67,7 +70,7 @@ public class StaffChatCommand extends Command {
             try {
                 if (core.getPluginConfig().getBoolean("") == true) {
                     String staffRole = getStaffRole(staffMember);
-                    String prefix = ChatColor.translateAlternateColorCodes('&', "&7[" + staffRole + "&7]");
+                    String prefix = ChatColor.translateAlternateColorCodes('&', staffRole);
                     BaseComponent[] components = TextComponent
                             .fromLegacyText(prefix + staffMember.getName());
                     player.sendMessage(components);
@@ -101,15 +104,32 @@ public class StaffChatCommand extends Command {
     }
 
     private String getStaffRole(ProxiedPlayer player) {
-        int priority = getStaffMemberPriority(player);
         User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
-        String prefix = user.getCachedData().getMetaData().getPrefix();
-        for (Map.Entry<String, Integer> entry : groupPriorities.entrySet()) {
-            if (entry.getValue() == priority) {
-                return entry.getKey();
+        Map<String, Integer> groupPriorities = new HashMap<>();
+        String highestPriorityGroup = null;
+        int highestPriority = Integer.MIN_VALUE;
+        for (Group group : user.getNodes(NodeType.INHERITANCE).stream()
+                .filter(node -> node instanceof InheritanceNode)
+                .map(node -> (InheritanceNode) node)
+                .map(InheritanceNode::getGroupName)
+                .map(groupName -> LuckPermsProvider.get().getGroupManager().getGroup(groupName))
+                .collect(Collectors.toSet())) {
+            Integer priority = groupPriorities.getOrDefault(group.getName(), Integer.MIN_VALUE);
+            if (priority > highestPriority) {
+                highestPriority = priority;
+                highestPriorityGroup = group.getName();
             }
         }
 
-        return prefix;
+        if (highestPriorityGroup != null) {
+            Group group = LuckPermsProvider.get().getGroupManager().getGroup(highestPriorityGroup);
+            if (group != null) {
+                String prefix = group.getCachedData().getMetaData().getPrefix();
+                return prefix != null ? prefix : highestPriorityGroup;
+            }
+        }
+
+        return "";
     }
+
 }
