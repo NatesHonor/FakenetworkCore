@@ -11,6 +11,7 @@ import com.nate.bungee.commands.Debugging.DebugHashmap;
 import com.nate.bungee.commands.Levels.LevelsCommand;
 import com.nate.bungee.commands.Parties.PartyCommandExecutor;
 import com.nate.bungee.commands.Punishments.PunishmentManager;
+import com.nate.bungee.commands.Punishments.Bans.BanCommand;
 import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
 import com.nate.bungee.commands.Punishments.Mutes.Unmute;
 import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSpam;
@@ -112,6 +113,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, new MuteSwear());
         getProxy().getPluginManager().registerCommand(this, debugHashmap);
         getProxy().getPluginManager().registerCommand(this, unmute);
+        getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new MuteSpam());
     }
 

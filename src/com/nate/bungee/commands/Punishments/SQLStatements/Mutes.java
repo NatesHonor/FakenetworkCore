@@ -55,7 +55,6 @@ public class Mutes {
         }
         return false;
     }
-    
 
     public void setPlayerUnmuted(String playerName) {
         try (Connection connection = dataSource.getConnection()) {
@@ -90,5 +89,25 @@ public class Mutes {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getOffenseCount(String playerName, String reason) {
+        int count = 0;
+        try (Connection connection = dataSource.getConnection()) {
+            String query = "SELECT COUNT(*) FROM punishments_mutes WHERE player_name = ? AND reason = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, playerName);
+                preparedStatement.setString(2, reason);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        count = resultSet.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 }

@@ -31,16 +31,24 @@ public class MuteSwear extends Command {
             }
 
             String reason = "Swearing";
-            int durationInDays = 1;
+            int offenseCount = mutes.getOffenseCount(targetPlayerName, reason);
+            int durationInDays = offenseCount + 1; 
+
             mutes.applyMute(targetPlayerName, reason, durationInDays);
 
             ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(targetPlayerName);
             if (targetPlayer != null) {
-                targetPlayer.sendMessage(new TextComponent("You have been muted for swearing for 1 day."));
+                targetPlayer.sendMessage(
+                        new TextComponent("You have been muted for swearing for " + durationInDays + " day(s)."));
+                if (offenseCount > 0) {
+                    targetPlayer.sendMessage(new TextComponent("Since this is offense # " + (offenseCount + 1)
+                            + "your mute has been extended by " + offenseCount + " day(s)."));
+                }
             }
 
             sender.sendMessage(
-                    new TextComponent("Player '" + targetPlayerName + "' has been muted for swearing for 1 day."));
+                    new TextComponent("Player '" + targetPlayerName + "' has been muted for swearing for "
+                            + durationInDays + " day(s)."));
         } else {
             sender.sendMessage(new TextComponent("This command can only be executed by a player."));
         }

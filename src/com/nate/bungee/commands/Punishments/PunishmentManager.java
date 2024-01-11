@@ -95,10 +95,10 @@ public class PunishmentManager implements Listener {
     private boolean isPlayerMuted(String playerName) {
         MuteInfo muteInfo = mutedPlayers.get(playerName);
         if (muteInfo == null) {
-            return false;
+            return mutes.isPlayerMuted(playerName);
         }
         long currentTime = System.currentTimeMillis();
-        if (currentTime >= muteInfo.unmuteTime || mutes.isPlayerMuted(playerName)) {
+        if (currentTime >= muteInfo.unmuteTime) {
             mutedPlayers.remove(playerName);
             return false;
         }

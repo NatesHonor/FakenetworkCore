@@ -16,9 +16,11 @@ public class SendToStaffChat {
         User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
         String prefix = user.getCachedData().getMetaData().getPrefix();
 
+        String coloredPrefix = prefix != null ? ChatColor.translateAlternateColorCodes('&', prefix) : "";
+
         BaseComponent[] messageComponents = new BaseComponent[] {
                 new TextComponent(ChatColor.GREEN + "[Staff Chat] "),
-                new TextComponent(ChatColor.translateAlternateColorCodes('&', prefix)),
+                new TextComponent(coloredPrefix),
                 new TextComponent(player.getName() + ": "),
                 new TextComponent(ChatColor.GRAY + message)
         };
