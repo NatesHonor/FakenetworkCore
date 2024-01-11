@@ -37,7 +37,7 @@ public class StaffChatCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         ProxiedPlayer player = (ProxiedPlayer) sender;
-        if (!player.hasPermission("nbungee.staff")) {
+        if (!player.hasPermission("fakenetwork.staff")) {
             player.sendMessage(new TextComponent(ChatColor.RED + "You do not have permission to use this command."));
             return;
         }

@@ -1,6 +1,6 @@
-name: nBungeeStaff
+name: FakenetworkCore
 author: NatesHonor
-version: 1.0.0-BETA
+version: 1.0.0D
 main: com.nate.bungee.Core
 api-version: 1.19
 

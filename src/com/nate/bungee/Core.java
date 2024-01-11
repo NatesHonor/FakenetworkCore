@@ -12,6 +12,7 @@ import com.nate.bungee.commands.Levels.LevelsCommand;
 import com.nate.bungee.commands.Parties.PartyCommandExecutor;
 import com.nate.bungee.commands.Punishments.PunishmentManager;
 import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
+import com.nate.bungee.commands.Punishments.Mutes.Unmute;
 import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSwear;
 import com.nate.bungee.commands.Punishments.SQLStatements.Warns;
 import com.nate.bungee.commands.Redirect.HubCommand;
@@ -23,6 +24,7 @@ import com.nate.bungee.commands.StaffChat.StaffChatCommand;
 import com.nate.bungee.utils.events.OnPlayerJoin;
 import com.nate.bungee.utils.events.OnPlayerLeave;
 import com.nate.bungee.utils.events.OnServerStop;
+import com.nate.bungee.utils.events.SpamListener;
 import com.nate.bungee.utils.events.StaffChatEventListener;
 import com.nate.bungee.utils.events.SwearWordListener;
 import com.nate.bungee.utils.storage.mysql.CreateTables;
@@ -83,7 +85,8 @@ public class Core extends Plugin implements Listener {
         OnServerStop onServerStop = new OnServerStop();
         HubCommand hubCommand = new HubCommand(onServerStop);
         MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
-        
+        Unmute unmute = new Unmute();
+
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
         getProxy().getPluginManager().registerListener(this, onPlayerLeave);
@@ -92,6 +95,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, staffChatEventListener);
         getProxy().getPluginManager().registerListener(this, onServerStop);
         getProxy().getPluginManager().registerListener(this, muteManagerChatListener);
+        getProxy().getPluginManager().registerListener(this, new SpamListener());
 
         getProxy().getPluginManager().registerCommand(this, hubCommand);
         getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
@@ -106,6 +110,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, new MuteManager());
         getProxy().getPluginManager().registerCommand(this, new MuteSwear());
         getProxy().getPluginManager().registerCommand(this, debugHashmap);
+        getProxy().getPluginManager().registerCommand(this, unmute);
     }
 
     @Override

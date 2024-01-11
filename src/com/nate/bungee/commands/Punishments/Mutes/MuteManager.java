@@ -76,8 +76,10 @@ public class MuteManager extends Command {
             if (!(event.getSender() instanceof ProxiedPlayer)) {
                 return;
             }
-
             ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+            if (event.getMessage().startsWith("/")) {
+                return;
+            }
             if (mutes.isPlayerMuted(player.getName())) {
                 player.sendMessage(new TextComponent(ChatColor.RED + "You are currently muted and cannot chat."));
                 event.setCancelled(true);
