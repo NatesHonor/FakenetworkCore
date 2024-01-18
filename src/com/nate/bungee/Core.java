@@ -10,6 +10,7 @@ import com.nate.bungee.commands.CrossLink.LinkCommand;
 import com.nate.bungee.commands.Debugging.DebugHashmap;
 import com.nate.bungee.commands.Levels.LevelsCommand;
 import com.nate.bungee.commands.Parties.PartyCommandExecutor;
+import com.nate.bungee.commands.Punishments.Duartions;
 import com.nate.bungee.commands.Punishments.PunishmentManager;
 import com.nate.bungee.commands.Punishments.Bans.BanCommand;
 import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
@@ -57,6 +58,7 @@ public class Core extends Plugin implements Listener {
         createTables.createReportsTable();
         createTables.createAcceptedReportsTable();
         createTables.createDeniedReportsTable();
+        createTables.createBansTable();
         try {
             if (!getDataFolder().exists()) {
                 getDataFolder().mkdir();
@@ -88,6 +90,7 @@ public class Core extends Plugin implements Listener {
         HubCommand hubCommand = new HubCommand(onServerStop);
         MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
         Unmute unmute = new Unmute();
+        Duartions durations = new Duartions();
 
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
@@ -115,6 +118,7 @@ public class Core extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, unmute);
         getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new MuteSpam());
+        getProxy().getPluginManager().registerCommand(this, durations);
     }
 
     @Override

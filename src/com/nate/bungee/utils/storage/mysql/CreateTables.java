@@ -46,6 +46,25 @@ public class CreateTables {
         }
     }
 
+    public void createBansTable() {
+        try {
+            Statement statement = core.getConnection().createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS bans (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "uuid VARCHAR(36) NULL," + // UUID can be NULL for cracked players
+                    "name VARCHAR(16) NOT NULL," +
+                    "reason TEXT," +
+                    "banned_by VARCHAR(16)," +
+                    "ban_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                    "unban_time TIMESTAMP NULL," +
+                    "is_active BOOLEAN DEFAULT TRUE" +
+                    ")");
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     
     public void addPlayerToLevelsTable(UUID playerUUID, String playerName, int level, int eventLevel) {
         try {

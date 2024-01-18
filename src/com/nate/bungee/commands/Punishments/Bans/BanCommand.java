@@ -25,6 +25,7 @@ public class BanCommand extends Command {
         }
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
+
         if (!player.hasPermission("fakenetwork.staff")) {
             player.sendMessage(new TextComponent("You do not have permission to use this command."));
             return;
@@ -34,7 +35,6 @@ public class BanCommand extends Command {
             player.sendMessage(new TextComponent("Usage: /ban <player>"));
             return;
         }
-
         ProxiedPlayer target = plugin.getProxy().getPlayer(args[0]);
         if (target == null) {
             player.sendMessage(new TextComponent("Player not found."));
@@ -45,14 +45,13 @@ public class BanCommand extends Command {
             player.sendMessage(new TextComponent("You cannot ban this player."));
             return;
         }
-
         openBanGUI(player, target);
     }
 
     private void openBanGUI(ProxiedPlayer player, ProxiedPlayer target) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("OpenBanGUI");
-        out.writeUTF(target.getName());
+        out.writeUTF(target.getUniqueId().toString());
 
         player.getServer().sendData("BungeeCord", out.toByteArray());
     }
