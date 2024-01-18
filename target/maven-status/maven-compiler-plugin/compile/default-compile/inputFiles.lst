@@ -30,10 +30,12 @@ C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\c
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\utils\events\OnPlayerLeave.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\utils\Parties\PartyManager.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\utils\api\SendPlaytimeRequests.java
+C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Punishments\SQLStatements\DatabaseManager.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Reports\DenyReportCommand.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Punishments\SQLStatements\Mutes.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Parties\PartyCommandExecutor.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\utils\storage\mysql\CreateTables.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Reports\AcceptReportCommand.java
+C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Punishments\Duartions.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Punishments\SQLStatements\Warns.java
 C:\Users\natha\Development\Minecraft\FakeNetwork\Proxy\Plugins\HypixelCore\src\com\nate\bungee\commands\Levels\LevelsCommand.java

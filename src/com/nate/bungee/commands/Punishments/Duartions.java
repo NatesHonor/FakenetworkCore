@@ -9,17 +9,19 @@ public class Duartions extends Command {
 
     private DatabaseManager databaseManager;
 
-    public Duartions() {
-        super("duration", "fakenetwork.duration", "punishmenttime", "ptime");
+    public Duartions(DatabaseManager databaseManager) {
+        super("duration", "", "punishmenttime", "ptime");
+        this.databaseManager = databaseManager;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        String playerName;
         if (args.length == 0) {
-            sender.sendMessage(new TextComponent("§cUsage: /duration <player>"));
-            return;
+            playerName = sender.getName();
+        } else {
+            playerName = args[0];
         }
-        String playerName = args[0];
         displayPunishmentDurations(sender, playerName);
     }
 

@@ -30,19 +30,66 @@ public class MuteSpam extends Command {
                 return;
             }
 
-            String reason = "Spamming";
-            int durationInHours = 12; // Duration set to 12 hours
+            int offenseCount = mutes.getOffenseCount(targetPlayerName, "Spamming");
+            String reason = "Spamming" + (offenseCount > 0 ? " (" + (offenseCount + 1) + ")" : "");
+            int durationInHours = (offenseCount + 1) * 12;
+
             mutes.applyMute(targetPlayerName, reason, durationInHours);
 
             ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(targetPlayerName);
             if (targetPlayer != null) {
-                targetPlayer.sendMessage(new TextComponent("You have been muted for spamming for 12 hours."));
+                targetPlayer.sendMessage(
+                        new TextComponent("You have been muted for " + reason + " for " + durationInHours + " hour(s)."));
+                if (offenseCount > 0) {
+                    targetPlayer.sendMessage(new TextComponent("Since this is offense # " + (offenseCount + 1)
+                            + ", your mute has been extended by " + offenseCount * 12 + " hour(s)."));
+                }
+            }
+
+            for (ProxiedPlayer staffMember : ProxyServer.getInstance().getPlayers()) {
+                if (staffMember.hasPermission("fakenetwork.staff")) {
+                    staffMember.sendMessage(new TextComponent(
+                            "§b[Mutes] §e" + targetPlayerName + " §ahas just been muted for §e"
+                                    + formatDurationForDisplay(durationInHours * 60L * 60 * 1000) + " §afor §e"
+                                    + reason));
+                }
             }
 
             sender.sendMessage(
-                    new TextComponent("Player '" + targetPlayerName + "' has been muted for spamming for 12 hours."));
+                    new TextComponent("Player '" + targetPlayerName + "' has been muted for " + reason + " for "
+                            + durationInHours + " hour(s)."));
         } else {
             sender.sendMessage(new TextComponent("This command can only be executed by a player."));
         }
+    }
+
+    private String formatDurationForDisplay(long durationMillis) {
+        if (durationMillis <= 0) {
+            return "instantly";
+        }
+
+        long seconds = durationMillis / 1000 % 60;
+        long minutes = durationMillis / (1000 * 60) % 60;
+        long hours = durationMillis / (1000 * 60 * 60) % 24;
+        long days = durationMillis / (1000 * 60 * 60 * 24);
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) {
+            sb.append(days).append(" day").append(days > 1 ? "s" : "").append(", ");
+        }
+        if (hours > 0) {
+            sb.append(hours).append(" hour").append(hours > 1 ? "s" : "").append(", ");
+        }
+        if (minutes > 0) {
+            sb.append(minutes).append(" minute").append(minutes > 1 ? "s" : "").append(", ");
+        }
+        if (seconds > 0) {
+            sb.append(seconds).append(" second").append(seconds > 1 ? "s" : "");
+        }
+        String formattedDuration = sb.toString();
+        if (formattedDuration.endsWith(", ")) {
+            formattedDuration = formattedDuration.substring(0, formattedDuration.length() - 2);
+        }
+        return formattedDuration;
     }
 }

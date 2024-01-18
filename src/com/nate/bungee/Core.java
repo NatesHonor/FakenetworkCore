@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import com.nate.bungee.commands.CrossLink.LinkCommand;
 import com.nate.bungee.commands.Debugging.DebugHashmap;
 import com.nate.bungee.commands.Levels.LevelsCommand;
@@ -17,6 +19,7 @@ import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
 import com.nate.bungee.commands.Punishments.Mutes.Unmute;
 import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSpam;
 import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSwear;
+import com.nate.bungee.commands.Punishments.SQLStatements.DatabaseManager;
 import com.nate.bungee.commands.Punishments.SQLStatements.Warns;
 import com.nate.bungee.commands.Redirect.HubCommand;
 import com.nate.bungee.commands.Reports.AcceptReportCommand;
@@ -31,6 +34,8 @@ import com.nate.bungee.utils.events.SpamListener;
 import com.nate.bungee.utils.events.StaffChatEventListener;
 import com.nate.bungee.utils.events.SwearWordListener;
 import com.nate.bungee.utils.storage.mysql.CreateTables;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -41,6 +46,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
+    private DatabaseManager databaseManager;
+    private DataSource dataSource;
 
     public static Core getInstance() {
         return instance;
@@ -49,7 +56,8 @@ public class Core extends Plugin implements Listener {
     @Override
     public void onEnable() {
         instance = this;
-
+        dataSource = setupDataSource();
+        databaseManager = new DatabaseManager(dataSource);
         connection = setupDatabase();
         CreateTables createTables = new CreateTables();
         Warns warns = new Warns();
@@ -90,7 +98,7 @@ public class Core extends Plugin implements Listener {
         HubCommand hubCommand = new HubCommand(onServerStop);
         MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
         Unmute unmute = new Unmute();
-        Duartions durations = new Duartions();
+        Duartions durations = new Duartions(databaseManager);
 
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, onPlayerJoin);
@@ -136,6 +144,24 @@ public class Core extends Plugin implements Listener {
         File configFile = new File(getDataFolder(), "config.yml");
         Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
         return config;
+    }
+
+    private DataSource setupDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/fakenetwork");
+        config.setUsername("root");
+        config.setPassword("");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("useServerPrepStmts", "true");
+        config.addDataSourceProperty("useLocalSessionState", "true");
+        config.addDataSourceProperty("rewriteBatchedStatements", "true");
+        config.addDataSourceProperty("cacheResultSetMetadata", "true");
+        config.addDataSourceProperty("cacheServerConfiguration", "true");
+        config.addDataSourceProperty("elideSetAutoCommits", "true");
+        config.addDataSourceProperty("maintainTimeStats", "false");
+        return new HikariDataSource(config);
     }
 
     private Connection setupDatabase() {

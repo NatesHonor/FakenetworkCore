@@ -30,9 +30,9 @@ public class MuteSwear extends Command {
                 return;
             }
 
-            String reason = "Swearing";
-            int offenseCount = mutes.getOffenseCount(targetPlayerName, reason);
-            int durationInDays = offenseCount + 1; 
+            int offenseCount = mutes.getOffenseCount(targetPlayerName, "Swearing");
+            String reason = "Swearing" + (offenseCount > 0 ? " (" + (offenseCount + 1) + ")" : "");
+            int durationInDays = offenseCount + 1;
 
             mutes.applyMute(targetPlayerName, reason, durationInDays);
 
@@ -45,12 +45,49 @@ public class MuteSwear extends Command {
                             + "your mute has been extended by " + offenseCount + " day(s)."));
                 }
             }
-
+            for (ProxiedPlayer staffMember : ProxyServer.getInstance().getPlayers()) {
+                if (staffMember.hasPermission("fakenetwork.staff")) {
+                    staffMember.sendMessage(new TextComponent(
+                            "§b[Mutes] §e" + targetPlayerName + " §ahas just been muted for §e"
+                                    + formatDurationForDisplay(durationInDays * 24L * 60 * 60 * 1000) + " §afor §e"
+                                    + reason));
+                }
+            }
             sender.sendMessage(
                     new TextComponent("Player '" + targetPlayerName + "' has been muted for swearing for "
                             + durationInDays + " day(s)."));
         } else {
             sender.sendMessage(new TextComponent("This command can only be executed by a player."));
         }
+    }
+
+    private String formatDurationForDisplay(long durationMillis) {
+        if (durationMillis <= 0) {
+            return "instantly";
+        }
+
+        long seconds = durationMillis / 1000 % 60;
+        long minutes = durationMillis / (1000 * 60) % 60;
+        long hours = durationMillis / (1000 * 60 * 60) % 24;
+        long days = durationMillis / (1000 * 60 * 60 * 24);
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) {
+            sb.append(days).append(" day").append(days > 1 ? "s" : "").append(", ");
+        }
+        if (hours > 0) {
+            sb.append(hours).append(" hour").append(hours > 1 ? "s" : "").append(", ");
+        }
+        if (minutes > 0) {
+            sb.append(minutes).append(" minute").append(minutes > 1 ? "s" : "").append(", ");
+        }
+        if (seconds > 0) {
+            sb.append(seconds).append(" second").append(seconds > 1 ? "s" : "");
+        }
+        String formattedDuration = sb.toString();
+        if (formattedDuration.endsWith(", ")) {
+            formattedDuration = formattedDuration.substring(0, formattedDuration.length() - 2);
+        }
+        return formattedDuration;
     }
 }
