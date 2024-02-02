@@ -8,31 +8,9 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.nate.bungee.commands.CrossLink.LinkCommand;
-import com.nate.bungee.commands.Debugging.DebugHashmap;
-import com.nate.bungee.commands.Levels.LevelsCommand;
-import com.nate.bungee.commands.Parties.PartyCommandExecutor;
-import com.nate.bungee.commands.Punishments.Duartions;
-import com.nate.bungee.commands.Punishments.PunishmentManager;
-import com.nate.bungee.commands.Punishments.Bans.BanCommand;
-import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
-import com.nate.bungee.commands.Punishments.Mutes.Unmute;
-import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSpam;
-import com.nate.bungee.commands.Punishments.Mutes.Reasons.MuteSwear;
 import com.nate.bungee.commands.Punishments.SQLStatements.DatabaseManager;
-import com.nate.bungee.commands.Punishments.SQLStatements.Warns;
-import com.nate.bungee.commands.Redirect.HubCommand;
-import com.nate.bungee.commands.Reports.AcceptReportCommand;
-import com.nate.bungee.commands.Reports.DenyReportCommand;
-import com.nate.bungee.commands.Reports.ListReportsCommand;
-import com.nate.bungee.commands.Reports.ReportCommand;
-import com.nate.bungee.commands.StaffChat.StaffChatCommand;
-import com.nate.bungee.utils.events.OnPlayerJoin;
-import com.nate.bungee.utils.events.OnPlayerLeave;
-import com.nate.bungee.utils.events.OnServerStop;
-import com.nate.bungee.utils.events.SpamListener;
-import com.nate.bungee.utils.events.StaffChatEventListener;
-import com.nate.bungee.utils.events.SwearWordListener;
+import com.nate.bungee.utils.Functions.RegisteringCommands;
+import com.nate.bungee.utils.Functions.RegisteringEvents;
 import com.nate.bungee.utils.storage.mysql.CreateTables;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -46,9 +24,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Core extends Plugin implements Listener {
     private Connection connection;
     private static Core instance;
-    private DatabaseManager databaseManager;
-    private DataSource dataSource;
-
+    public DatabaseManager databaseManager;
+    public DataSource dataSource;
     public static Core getInstance() {
         return instance;
     }
@@ -60,13 +37,7 @@ public class Core extends Plugin implements Listener {
         databaseManager = new DatabaseManager(dataSource);
         connection = setupDatabase();
         CreateTables createTables = new CreateTables();
-        Warns warns = new Warns();
-        warns.createWarnsTable();
-        createTables.createLevelsTable();
-        createTables.createReportsTable();
-        createTables.createAcceptedReportsTable();
-        createTables.createDeniedReportsTable();
-        createTables.createBansTable();
+        createTables.createAllTables();
         try {
             if (!getDataFolder().exists()) {
                 getDataFolder().mkdir();
@@ -82,51 +53,10 @@ public class Core extends Plugin implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        OnPlayerJoin onPlayerJoin = new OnPlayerJoin();
-        ReportCommand reportCommand = new ReportCommand();
-        OnPlayerLeave onPlayerLeave = new OnPlayerLeave();
-        PunishmentManager punishmentManager = new PunishmentManager();
-        SwearWordListener swearWordListener = new SwearWordListener();
-        ListReportsCommand listReportsCommand = new ListReportsCommand();
-        PartyCommandExecutor partyCommandExecutor = new PartyCommandExecutor();
-        StaffChatEventListener staffChatEventListener = new StaffChatEventListener();
-        LevelsCommand.LevelSetCommand levelSetCommand = new LevelsCommand().new LevelSetCommand();
-        LevelsCommand.LevelExpCommand levelExpCommand = new LevelsCommand().new LevelExpCommand();
-        DebugHashmap debugHashmap = new DebugHashmap(this, punishmentManager);
-        OnServerStop onServerStop = new OnServerStop();
-        HubCommand hubCommand = new HubCommand(onServerStop);
-        MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
-        Unmute unmute = new Unmute();
-        Duartions durations = new Duartions(databaseManager);
-
-        getProxy().getPluginManager().registerListener(this, this);
-        getProxy().getPluginManager().registerListener(this, onPlayerJoin);
-        getProxy().getPluginManager().registerListener(this, onPlayerLeave);
-        getProxy().getPluginManager().registerListener(this, swearWordListener);
-        getProxy().getPluginManager().registerListener(this, punishmentManager);
-        getProxy().getPluginManager().registerListener(this, staffChatEventListener);
-        getProxy().getPluginManager().registerListener(this, onServerStop);
-        getProxy().getPluginManager().registerListener(this, muteManagerChatListener);
-        getProxy().getPluginManager().registerListener(this, new SpamListener());
-
-        getProxy().getPluginManager().registerCommand(this, hubCommand);
-        getProxy().getPluginManager().registerCommand(this, new LinkCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
-        getProxy().getPluginManager().registerCommand(this, new AcceptReportCommand());
-        getProxy().getPluginManager().registerCommand(this, new DenyReportCommand());
-        getProxy().getPluginManager().registerCommand(this, levelSetCommand);
-        getProxy().getPluginManager().registerCommand(this, levelExpCommand);
-        getProxy().getPluginManager().registerCommand(this, reportCommand);
-        getProxy().getPluginManager().registerCommand(this, listReportsCommand);
-        getProxy().getPluginManager().registerCommand(this, partyCommandExecutor);
-        getProxy().getPluginManager().registerCommand(this, new MuteManager());
-        getProxy().getPluginManager().registerCommand(this, new MuteSwear());
-        getProxy().getPluginManager().registerCommand(this, debugHashmap);
-        getProxy().getPluginManager().registerCommand(this, unmute);
-        getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new MuteSpam());
-        getProxy().getPluginManager().registerCommand(this, durations);
+        RegisteringEvents registeringEvents = new RegisteringEvents();
+        registeringEvents.registerAllEvents();
+        RegisteringCommands registeringCommands = new RegisteringCommands();
+        registeringCommands.registerAllCommands();
     }
 
     @Override
@@ -139,6 +69,10 @@ public class Core extends Plugin implements Listener {
             }
         }
     }
+
+
+
+
 
     public Configuration getPluginConfig() throws IOException {
         File configFile = new File(getDataFolder(), "config.yml");

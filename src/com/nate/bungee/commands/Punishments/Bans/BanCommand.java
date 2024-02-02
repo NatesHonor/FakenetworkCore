@@ -51,8 +51,10 @@ public class BanCommand extends Command {
     private void openBanGUI(ProxiedPlayer player, ProxiedPlayer target) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("OpenBanGUI");
+        out.writeUTF(target.getName());
         out.writeUTF(target.getUniqueId().toString());
-
+        out.writeUTF(player.getName());
+        plugin.getLogger().info("Sending OpenBanGUI message to " + target.getName());
         player.getServer().sendData("BungeeCord", out.toByteArray());
     }
 }

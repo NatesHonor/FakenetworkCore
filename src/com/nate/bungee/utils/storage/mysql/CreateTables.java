@@ -12,7 +12,16 @@ import java.sql.ResultSet;
 public class CreateTables {
     Core core = Core.getInstance();
 
-    public void createLevelsTable() {
+    public void createAllTables() {
+        createAcceptedReportsTable();
+        createLevelsTable();
+        createReportsTable();
+        createBansTable();
+        createDeniedReportsTable();
+        createWarnsTable();
+    }
+
+    private void createLevelsTable() {
         try {
             Statement statement = core.getConnection().createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS levels (" +
@@ -29,7 +38,7 @@ public class CreateTables {
         }
     }
 
-    public void createReportsTable() {
+    private void createReportsTable() {
         try {
             Statement statement = core.getConnection().createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS reports (" +
@@ -46,10 +55,10 @@ public class CreateTables {
         }
     }
 
-    public void createBansTable() {
+    private void createBansTable() {
         try {
             Statement statement = core.getConnection().createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS bans (" +
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS punishments_bans (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "uuid VARCHAR(36) NULL," +
                     "name VARCHAR(16) NOT NULL," +
@@ -58,8 +67,25 @@ public class CreateTables {
                     "ban_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "unban_time TIMESTAMP NULL," +
                     "unbanned ENUM('yes', 'no') DEFAULT 'no'," +
-                    "is_active BOOLEAN DEFAULT TRUE" +
+                    "is_active BOOLEAN DEFAULT TRUE," +
+                    "exact_duration VARCHAR(255) NOT NULL" +
                     ")");
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void createWarnsTable() {
+        try {
+            Statement statement = core.getConnection().createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS punishments_warns ("
+                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
+                    + "player_name VARCHAR(255),"
+                    + "reason VARCHAR(255),"
+                    + "timestamp TIMESTAMP"
+                    + ")");
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,7 +121,7 @@ public class CreateTables {
         }
     }
 
-    public void createAcceptedReportsTable() {
+    private void createAcceptedReportsTable() {
         try {
             Statement statement = core.getConnection().createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS accepted_reports (" +
@@ -110,7 +136,7 @@ public class CreateTables {
         }
     }
 
-    public void createDeniedReportsTable() {
+    private void createDeniedReportsTable() {
         try {
             Statement statement = core.getConnection().createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS denied_reports (" +
