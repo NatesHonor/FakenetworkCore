@@ -27,23 +27,22 @@ public class BanListener implements Listener {
             String subchannel = in.readUTF();
             ProxyServer.getInstance().getLogger().info("Received subchannel: " + subchannel);
             if (subchannel.equals("ExecuteBan")) {
-                String executorUuid = in.readUTF();
-                String reason = in.readUTF();
+                String executorName = in.readUTF();
+                String targetName = in.readUTF();
                 String targetUuid = in.readUTF();
+                String reason = in.readUTF();
                 boolean isSilent = in.readBoolean();
-                ProxyServer.getInstance().getLogger().info("Ban details: Executor UUID: " + executorUuid
-                        + ", Target UUID: " + targetUuid + ", Reason: " + reason + ", Silent: " + isSilent);
-
                 ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(targetUuid);
                 if (targetPlayer != null) {
                     ProxyServer.getInstance().getLogger().info("Ban for player received: " + targetPlayer.getName());
-
                     String banDuration = BanDuration.getDuration(reason);
                     String kickMessage = "You have been banned from this server!\n" +
                             "Reason: " + reason + "\n" +
                             "Duration: " + banDuration + "\n" +
                             "Appeal at appeal.fakenetwork.net";
                     targetPlayer.disconnect(new TextComponent(kickMessage));
+                    BanExecutionLogic banExecutionLogic = new BanExecutionLogic();
+                    banExecutionLogic.executeBan(targetUuid, targetName, reason, executorName);
                 } else {
                     ProxyServer.getInstance().getLogger()
                             .warning("Target player with UUID: " + targetUuid + " not found or not online.");

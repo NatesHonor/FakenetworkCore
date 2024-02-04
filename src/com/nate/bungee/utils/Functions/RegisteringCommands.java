@@ -7,6 +7,7 @@ import com.nate.bungee.commands.Levels.LevelsCommand;
 import com.nate.bungee.commands.Parties.PartyCommandExecutor;
 import com.nate.bungee.commands.Punishments.Duartions;
 import com.nate.bungee.commands.Punishments.PunishmentManager;
+import com.nate.bungee.commands.Punishments.Bans.BanChecker;
 import com.nate.bungee.commands.Punishments.Bans.BanCommand;
 import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
 import com.nate.bungee.commands.Punishments.Mutes.Unmute;
@@ -40,7 +41,9 @@ public class RegisteringCommands {
         HubCommand hubCommand = new HubCommand(onServerStop);
         Unmute unmute = new Unmute();
         Duartions durations = new Duartions(Core.getInstance().databaseManager);
+        BanChecker banChecker = new BanChecker();
 
+        Core.getInstance().getProxy().getPluginManager().registerCommand(Core.getInstance(), banChecker);
         Core.getInstance().getProxy().getPluginManager().registerCommand(Core.getInstance(), hubCommand);
         Core.getInstance().getProxy().getPluginManager().registerCommand(Core.getInstance(),
                 new LinkCommand(Core.getInstance()));

@@ -2,6 +2,7 @@ package com.nate.bungee.utils.Functions;
 
 import com.nate.bungee.Core;
 import com.nate.bungee.commands.Punishments.PunishmentManager;
+import com.nate.bungee.commands.Punishments.Bans.BanChecker;
 import com.nate.bungee.commands.Punishments.Bans.BanListener;
 import com.nate.bungee.commands.Punishments.Mutes.MuteManager;
 import com.nate.bungee.utils.events.OnPlayerJoin;
@@ -25,7 +26,9 @@ public class RegisteringEvents implements Listener {
         OnServerStop onServerStop = new OnServerStop();
         MuteManager.ChatListener muteManagerChatListener = new MuteManager.ChatListener();
         BanListener banListener = new BanListener();
+        BanChecker banChecker = new BanChecker();
 
+        Core.getInstance().getProxy().getPluginManager().registerListener(Core.getInstance(), banChecker);
         Core.getInstance().getProxy().getPluginManager().registerListener(Core.getInstance(), banListener);
         Core.getInstance().getProxy().getPluginManager().registerListener(Core.getInstance(), Core.getInstance());
         Core.getInstance().getProxy().getPluginManager().registerListener(Core.getInstance(), onPlayerJoin);
